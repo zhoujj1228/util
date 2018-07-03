@@ -16,9 +16,13 @@ import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
@@ -39,10 +43,51 @@ import jxl.write.WritableWorkbook;
 import util.domain.ExcelSheetDomain;
 
 public class FileUtil {
+
 	public static void main(String[] args){
-		HashMap<String, List<List<String>>> sheetNameMapBy03OR07Excel = getSheetNameMapBy03OR07Excel("D:\\Test\\excel\\1.xlsx", 0, 0);
-		System.out.println(sheetNameMapBy03OR07Excel.get("Sheet2"));
+		File file = new File("E:\\备份\\");
+		TreeMap<String, TreeMap> fileSubPathMap = getFileSubPath(file, false);
+		String off = "--";
+		itorFilePathMap(fileSubPathMap, off);
 	}
+	
+	public static void itorFilePathMap(TreeMap<?, TreeMap> fileSubPathMap, String off) {
+		Set<String> keySet = (Set<String>) fileSubPathMap.keySet();
+		for(String name : keySet){
+			System.out.println(off + name);
+			TreeMap subFiles = fileSubPathMap.get(name);
+			if(subFiles != null){
+				itorFilePathMap(subFiles, off + "--");
+			}
+		}
+	}
+
+	/**
+	 * 获取目录列表
+	 * @param supFile
+	 * @param isNeedFile
+	 * @return
+	 */
+	public static TreeMap<String, TreeMap> getFileSubPath(File supFile, boolean isNeedFile){
+		TreeMap<String, TreeMap> result = new TreeMap<String, TreeMap>();
+		File[] listFiles = supFile.listFiles();
+		int i = 1;
+		for(File file : listFiles){
+			if(!isNeedFile && !file.isDirectory()){
+				continue;
+			}
+			if(file.listFiles() == null || file.listFiles().length == 0){
+				//result.put(i++ + "." + file.getName(), null);
+				result.put(file.getName(), null);
+			}else{
+				TreeMap<String, TreeMap> temp = getFileSubPath(file, isNeedFile);
+				//result.put(i++ + "." + file.getName(), temp);
+				result.put(file.getName(), temp);
+			}
+		}
+		return result;
+	}
+	
 	
 	public static void writeByFileAppendWithEncodeByList(List<String> list ,File file ,String encode){
 		FileOutputStream fos = null;
