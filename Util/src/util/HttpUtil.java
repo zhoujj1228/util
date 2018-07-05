@@ -33,7 +33,29 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class HttpUtil {
-	public static void callHttpParamPost(String url, HashMap<String,String> paramMap, String data){
+	
+	public static void main(String[] args) throws InterruptedException{
+		String url = "http://home.dcits.com/dcie/releaseItem/show/44";
+		String fileName = url.substring(7, url.length()).replaceAll("/", "++") + ".html";
+		String result = callHttpParamGet(url, null, null, "UTF-8");
+		File file = FileUtil.createFileDeleteSource("D:/Test/esb/project/" + fileName);
+		FileUtil.writeByFileWithEncoding(result, file, "UTF-8");
+		List<List<String>> patternList = PatternUtil.getPatternList(result, "href=\"(.*?)\"", 1);
+		
+		//System.out.println(patternList);
+		for(List<String> list : patternList){
+			Thread.currentThread().sleep(1000);
+			url = list.get(1);
+			System.out.println(url);
+			fileName = url.substring(7, url.length()).replaceAll("/", "++");
+			result = callHttpParamGet(url, null, null, "UTF-8");
+			file = FileUtil.createFileDeleteSource("D:/Test/esb/project/" + fileName);
+			FileUtil.writeByFileWithEncoding(result, file, "UTF-8");
+		}
+	}
+	
+	
+	public static String callHttpParamPost(String url, HashMap<String,String> paramMap, String data, String encode){
 		StringBuffer sb = new StringBuffer();
 		String paramString = null;
 		if(paramMap != null){
@@ -86,7 +108,7 @@ public class HttpUtil {
 			int code = url_con.getResponseCode();
 			if(code == HttpURLConnection.HTTP_OK){
 				in = url_con.getInputStream();
-				isr = new InputStreamReader(in);
+				isr = new InputStreamReader(in, encode);
 				br = new BufferedReader(isr);
 				String s = br.readLine();
 				StringBuffer sbRsp = new StringBuffer();
@@ -131,10 +153,11 @@ public class HttpUtil {
 				}
 			}
 		}
+		return result;
 		
 	}
 	
-	public static void callHttpParamGet(String url, HashMap<String,String> paramMap, String data){
+	public static String callHttpParamGet(String url, HashMap<String,String> paramMap, String data, String encode){
 		StringBuffer sb = new StringBuffer();
 		String paramString = null;
 		if(paramMap != null){
@@ -168,7 +191,9 @@ public class HttpUtil {
 			//设置通用的请求属性
 			url_con.setRequestProperty("accept", "*/*");
 			url_con.setRequestProperty("connection", "Keep-Alive");
+			url_con.setRequestProperty("Cookie", "Hm_lvt_428625cbc2b4a0c40698357ed55cdba9=1522650616; Hm_lvt_1ebcfb94d6c4595ccc209b35019cd05d=1529032835; _pk_id.3.ec3a=27f0bdf36521d25b.1518059675.2.1522651850.1518059719.; Hm_lvt_e723284c7c986858e4979c37cfecef34=1530170143; PD-H-SESSION-ID=4_lynrb8uFU7tGA9JEo1tNo3RHsxiHMRG+PufzpiXJO8F9e7NW; SESSION_COOKIE=c_webseal_31; AMWEBJCT!%2Fitsweb!JSESSIONID=1E55D3325BA7D0842C46EA81396A43D7; IV_JCT=%2Fdcie; AMWEBJCT!%2Fdcie!JSESSIONID=05BECA3C8E97E2AC02188C08DEE9C4ED; PD-ID=nIHTOpTOFg39NQsDA2IWPPPjRslFYwFHFHMlkA9NRrYwfQcxrwkQXrUuNaNh4yRwpfUNjJmL7CXEjiUcB/IK0A9PdqtgO24ymDjo7bDPSnHPY7F1p/y/X0PPdghVg4zbXfl1Ty5RGZl34C5bDMMBO0wrrDqVAHQeWH1CyOQbc4uc2D+m9c0Bwkvzr4LwMNoiQyuDye1+Oo8T+8jo5l/jZE6QV3qm7V74eGQtiijE1f8Op6YYmWCxLkiE/fV3Q/VgdxUZ+SVnFWM=; PD-ECC=BAGs3DB0AgEBAgIBmgIBAAIBAAQABGMEAazcMF0CAQECBFs9qQIEGWhvbWUuaXRzcG9ydGFsLmRjaXRzLmNvbQAEBmRjaXRzAAQOL3BrbXN2b3VjaGZvcgAwHwIBATAaMBgCAQEEDHBkLWVjYy1odHRwADAFBAM4MAA=!.dcits.com");
 			url_con.setRequestMethod("GET");
+			url_con.setInstanceFollowRedirects(false); 
 			//post请求必须这两行
 			/*url_con.setDoOutput(true);
 			url_con.setDoInput(true);*/
@@ -187,7 +212,7 @@ public class HttpUtil {
 			int code = url_con.getResponseCode();
 			if(code == HttpURLConnection.HTTP_OK){
 				in = url_con.getInputStream();
-				isr = new InputStreamReader(in);
+				isr = new InputStreamReader(in, encode);
 				br = new BufferedReader(isr);
 				String s = br.readLine();
 				StringBuffer sbRsp = new StringBuffer();
@@ -197,11 +222,15 @@ public class HttpUtil {
 				}
 				result = sbRsp.toString();
 				System.out.println(result);
+				System.out.println(url_con.getHeaderFields());
 				br.close();
 				isr.close();
 				in.close();
 			}
 			else{
+				if(code == 302){
+					System.out.println();
+				}
 				System.out.println("errCode="+code);
 			}
 		} catch (IOException e) {
@@ -232,6 +261,7 @@ public class HttpUtil {
 				}
 			}
 		}
+		return result;
 		
 	}
 	
