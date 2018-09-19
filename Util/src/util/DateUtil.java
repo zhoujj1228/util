@@ -75,11 +75,16 @@ public class DateUtil {
 	}
 	
 	public static String changeDateToNumberDate(Date date, String regex){
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy" + regex + "MM" + regex + "dd");
-		String dateStr = sdf.format(date);
-		dateStr = dateStr.replaceAll(regex + "0", regex);
-		return dateStr;
-	}
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy" + regex + "MM" + regex + "dd");
+        String dateStr = sdf.format(date);
+        if(regex.equals(".")){
+            dateStr = dateStr.replaceAll("\\.0", regex);
+        }else{
+            dateStr = dateStr.replaceAll(regex + "0", regex);
+        }
+        
+        return dateStr;
+    }
 	
 	/**
 	 * 得到dateNum天数后的日期

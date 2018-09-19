@@ -411,6 +411,44 @@ public class FileUtil {
 	}
 	
 	/**
+     * 根据excel文件路径得到一个可写的Workbook
+     * @param excelPath 文件路径
+     * @return 一个可写的Workbook
+     */
+    public static boolean writeExcelByMap(String excelPath, HashMap<String, List<List<String>>> map){
+        InputStream is = null;
+        Workbook readwb;
+        WritableWorkbook writewb = null;
+        try {
+            is = new FileInputStream(excelPath);
+            readwb = Workbook.getWorkbook(is);
+            writewb = Workbook.createWorkbook(new File(excelPath), readwb);
+            writewb = Workbook.createWorkbook(new File(excelPath));
+            int sheetNum = 0;
+            for(String key : map.keySet()){
+                List<List<String>> lists = map.get(key);
+                WritableSheet sheet = writewb.createSheet(key, sheetNum++);
+                //WritableSheet sheet = writewb.getSheet(0);
+                for(int i = 0; i < lists.size(); i++){
+                    List<String> list = lists.get(i);
+                    for(int j = 0; j < list.size(); j++){
+                        Label label = new Label(j, i, list.get(j));
+                        sheet.addCell(label);
+                    }
+                }
+            }
+
+            writewb.write();
+            writewb.close();
+            return true;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+	
+	/**
 	 * 
 	 * @param is	输入流
 	 * @param length	读取长度
