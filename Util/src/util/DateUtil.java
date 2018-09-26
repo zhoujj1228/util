@@ -14,11 +14,11 @@ public class DateUtil {
 		
 	}
 	public static String getDateWithDhms(){
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		String result = sdf.format(date);
-		return result;
-	}
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyMMddHHmmss");
+        String result = sdf.format(date);
+        return result;
+    }
 	
 	/**
 	 * 根据模板生成时间字符串
