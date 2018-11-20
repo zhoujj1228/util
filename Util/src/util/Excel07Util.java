@@ -27,6 +27,62 @@ public class Excel07Util {
         HashMap<String, List<List<String>>> map= FileUtil.getSheetNameMapBy03OR07Excel("D:/Test/excel/t.xls", 0, 0);
         writeNewExcelByMap(file, map);
     }
+    public static boolean writeNewExcelByMapAndFlag(File file, HashMap<String, List<String>> map, String flag){
+        OutputStream os;
+        Workbook writewb;
+        try {
+            writewb = new XSSFWorkbook();
+            if(!file.exists()){
+                file.createNewFile();
+            }
+            
+            for(String key : map.keySet()){
+                List<String> lists = map.get(key);
+                Sheet sheet = writewb.createSheet(key);
+                for(int rowIdx = 0; rowIdx < lists.size(); rowIdx++){
+                    Row row = sheet.createRow(rowIdx);
+                    String list = lists.get(rowIdx);
+                    String[] cellList = list.split(flag);
+                    for(int cellIdx = 0; cellIdx < cellList.length; cellIdx++){
+                        Cell cell = row.createCell(cellIdx);
+                        String value = cellList[cellIdx];
+                        cell.setCellValue(value);
+                    }
+                }
+            }
+            
+            os = new FileOutputStream(file);
+            writewb.write(os);
+            os.close();
+            writewb.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public static boolean copy07Excel(File newFile, File oldFile) {
+        InputStream is = null;
+        OutputStream os;
+        Workbook writewb = null;
+        try {
+            if(!newFile.exists()){
+                newFile.createNewFile();
+            }
+            is = new FileInputStream(oldFile);
+            writewb = WorkbookFactory.create(is);
+            is.close();
+            os = new FileOutputStream(newFile);
+            writewb.write(os);
+            writewb.close();
+            os.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     
     /**
      * 在原来excel上追加lists数据
@@ -84,6 +140,36 @@ public class Excel07Util {
                 for(int cellIdx = 0; cellIdx < cellList.size(); cellIdx++){
                     Cell cell = row.createCell(cellIdx);
                     String value = cellList.get(cellIdx);
+                    cell.setCellValue(value);
+                }
+            }
+            os = new FileOutputStream(file);
+            writewb.write(os);
+            os.close();
+            writewb.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public static boolean writeNewExcelByListAndFlag(File file, List<String> lists, String flag){
+        OutputStream os;
+        Workbook writewb;
+        try {
+            writewb = new XSSFWorkbook();
+            if(!file.exists()){
+                file.createNewFile();
+            }
+            Sheet sheet = writewb.createSheet();
+            for(int rowIdx = 0; rowIdx < lists.size(); rowIdx++){
+                Row row = sheet.createRow(rowIdx);
+                String list = lists.get(rowIdx);
+                String[] cellList = list.split(flag);
+                for(int cellIdx = 0; cellIdx < cellList.length; cellIdx++){
+                    Cell cell = row.createCell(cellIdx);
+                    String value = cellList[cellIdx];
                     cell.setCellValue(value);
                 }
             }

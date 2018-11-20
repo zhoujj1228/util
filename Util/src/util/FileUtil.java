@@ -491,11 +491,12 @@ public class FileUtil {
 				for(int j = 0; j < row.getLastCellNum(); j++){
 					if(row != null){
 						XSSFCell cell = row.getCell(j);
-						if(cell != null && !"".equals(cell.getStringCellValue())){
-							cellList.add(cell.getStringCellValue());
-						}else{
-							cellList.add("空");
-						}
+						if(cell==null){
+						    cellList.add("");
+                            continue;
+                        }
+                        String s = getCellString(cell);
+                        cellList.add(s);
 					}
 					
 				}
@@ -558,13 +559,8 @@ public class FileUtil {
 							System.out.println("null页"+sheetNum+"行"+i+"列"+j);
 							continue;
 						}
-						if(cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC){
-							String s = cell.getNumericCellValue()+"";
-							rowList.add(s);
-						}else{
-							String s = cell.getStringCellValue();
-							rowList.add(s);
-						}
+						String s = getCellString(cell);
+                        rowList.add(s);
 						
 					}
 					allList.add(rowList);
@@ -631,13 +627,8 @@ public class FileUtil {
 							rowList.add("");
 							continue;
 						}
-						if(cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC){
-							String s = cell.getNumericCellValue()+"";
-							rowList.add(s);
-						}else{
-							String s = cell.getStringCellValue();
-							rowList.add(s);
-						}
+						String s = getCellString(cell);
+                        rowList.add(s);
 						
 					}
 					allList.add(rowList);
@@ -683,8 +674,8 @@ public class FileUtil {
 					XSSFRow row = sheet.getRow(i);
 					for(int j = beginLie ; j < row.getLastCellNum(); j++){
 						XSSFCell cell = row.getCell(j);
-						String s = cell.getStringCellValue();
-						rowList.add(s);
+						String s = getCellString(cell);
+                        rowList.add(s);
 					}
 					
 				}
@@ -890,13 +881,8 @@ public class FileUtil {
 							rowList.add("");
 							continue;
 						}
-						if(cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC){
-							String s = cell.getNumericCellValue()+"";
-							rowList.add(s);
-						}else{
-							String s = cell.getStringCellValue();
-							rowList.add(s);
-						}
+						String s = getCellString(cell);
+                        rowList.add(s);
 						
 					}
 					allList.add(rowList);
@@ -1014,6 +1000,11 @@ public class FileUtil {
 		File file = new File(rootPath + dir);
 		file.mkdirs();
 	}
+	
+	public static void createDIRbyPath(String path){
+        File file = new File(path);
+        file.mkdirs();
+    }
 	
 	public static byte[] readFileToByteByInt(String filePath) {
 		InputStream fis;
@@ -1141,6 +1132,7 @@ public class FileUtil {
 				}
 				break;
 			case Cell.CELL_TYPE_BLANK:
+			    result = "";
 				break;
 			default:
 				throw new Exception("数据类型不正确");
