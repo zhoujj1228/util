@@ -100,6 +100,18 @@ public class DateUtil {
 		return resultDate;
 	}
 	
+	/**
+	 * 根据模板与时间字符串生成Date对象
+	 * @param pattern 
+	 * yyyy代表年
+	 * MM代表月
+	 * dd代表天
+	 * hh代表小时
+	 * mm代表分
+	 * ss代表秒
+	 * SSS代表毫秒
+	 * @return 对应时间
+	 */
 	public static Date parseDate(String dateStr, String pattern){
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 		Date date = null;
@@ -111,6 +123,17 @@ public class DateUtil {
 		return date;
 	}
 	
+	/**
+	 * 根据模板生成时间字符串
+	 * yyyy代表年
+	 * MM代表月
+	 * dd代表天
+	 * hh代表小时
+	 * mm代表分
+	 * ss代表秒
+	 * SSS代表毫秒
+	 * @return 对应时间
+	 */
 	public static String parseDate(Date date, String pattern){
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 		String dateStr = null;

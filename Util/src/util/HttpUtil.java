@@ -266,7 +266,7 @@ public class HttpUtil {
 	}
 	
 	
-	public static void callHttpXml(String url,String data){
+	public static void callHttpXml(String url,String data) throws Exception{
 		HttpURLConnection connection = null;
 		OutputStream os = null;
 		URL urls = null;
@@ -324,6 +324,7 @@ public class HttpUtil {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		} finally{
 			if(os != null){
 				try {
@@ -370,6 +371,23 @@ public class HttpUtil {
 		}
 		//设置对应目录处理类
 		httpServer.createContext(context, new HanderTestA(rspData));
+		//httpServer.createContext("/test",new HanderTestB());
+		httpServer.setExecutor(null);
+		httpServer.start();
+		System.out.println("httpServer...start...");
+	}
+	
+	
+	public static void createHttpServer(int connectNum, String rspData, String context, int port, HttpHandler handler){
+		InetSocketAddress inetSock = new InetSocketAddress(port);
+		HttpServer httpServer =null;
+		try {
+			httpServer = HttpServer.create(inetSock, connectNum);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//设置对应目录处理类
+		httpServer.createContext(context, handler);
 		//httpServer.createContext("/test",new HanderTestB());
 		httpServer.setExecutor(null);
 		httpServer.start();

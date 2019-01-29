@@ -2,7 +2,10 @@ package util;
 
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class JsonUtil {
@@ -69,9 +72,15 @@ public class JsonUtil {
 				float value = (float) sourceValue;
 				field.set(obj, value);
 			}else if(type.equals(String[].class)){
-				double sourceValue = jsonObj.getDouble(name);
-				float value = (float) sourceValue;
-				field.set(obj, value);
+				JSONArray sourceValue = jsonObj.getJSONArray(name);
+				String[] temp = new String[sourceValue.length()];
+				for (int i = 0; i < sourceValue.length(); i++) {
+					String value = sourceValue.getString(i);
+					temp[i] = value;
+				}
+				field.set(obj, temp);
+			}else if(type.equals(ArrayList.class)){
+				
 			}else{
 				/*jsonObj.get
 				getDomainByJsonStr*/
@@ -94,15 +103,5 @@ public class JsonUtil {
 	
 	
 	
-	//-----------²âÊÔÄÚÈÝ------------
-	String str;
-
-	public String getStr() {
-		return str;
-	}
-
-	public void setStr(String str) {
-		this.str = str;
-	}
 }
 

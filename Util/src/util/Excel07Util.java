@@ -12,13 +12,16 @@ import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Excel07Util {
@@ -270,6 +273,13 @@ public class Excel07Util {
                 cellStyle.setVerticalAlignment((short) 1);
                 //设置水平左对齐，具体见HorizontalAlignment
                 cellStyle.setAlignment((short) 1);
+                
+                //设置超链接,连接当前文档页签名为服务识别并定位到A1
+				CreationHelper createHelper = wb.getCreationHelper();
+				XSSFHyperlink link = (XSSFHyperlink) createHelper.createHyperlink(Hyperlink.LINK_DOCUMENT);
+				link.setLocation("#服务识别!A1");
+				cell.setHyperlink(link);
+                
                 
                 cell.setCellStyle(cellStyle);
                 
