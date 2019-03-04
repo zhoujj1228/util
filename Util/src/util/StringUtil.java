@@ -140,4 +140,11 @@ public class StringUtil {
 		list1.addAll(list2);
 		return list1;
 	}
+	
+	
+	public static String getIntStringbyDouble(double num){
+		String result = (int)num + "";
+		return result;
+	}
+	
 }

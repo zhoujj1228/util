@@ -9,14 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 
 /**
  * HSSFWorkbook是操作03版Excel
@@ -32,7 +35,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 public class BigExcelWriterUtil {
 	
 public static void main(String[] args) throws Exception {
-		String sfilePath = "C:/Users/Administrator/Desktop/周家炬/保存/temp.xlsx";
+		String sfilePath = "C:/Users/Administrator/Desktop/周家炬/保存/字段映射文档-南粤POS收单系统.xlsx";
 		String filePath = "C:/Users/Administrator/Desktop/周家炬/保存/temp2.xlsx";
 		List<List<String>> lists = FileUtil.getListBy03OR07ExcelPhysical(sfilePath, 0, 0);
 		writeBigExcel(new File(filePath), lists);
@@ -133,7 +136,7 @@ public static void main(String[] args) throws Exception {
             for(int cellIdx = 0; cellIdx < cellList.size(); cellIdx++){
                 Cell cell = row.createCell(cellIdx);
                 
-                CellStyle cellStyle = cell.getCellStyle();
+                CellStyle cellStyle = wb.createCellStyle();;
 
                 //设置自动换行
                 cellStyle.setWrapText(true);
@@ -160,11 +163,29 @@ public static void main(String[] args) throws Exception {
                 //设置填充格式,具体见FillPatternType
                 cellStyle.setFillPattern((short)1);
                 
+                //设置超链接,连接当前文档页签名为服务识别并定位到A1
+				CreationHelper createHelper = wb.getCreationHelper();
+				XSSFHyperlink link = (XSSFHyperlink) createHelper.createHyperlink(Hyperlink.LINK_DOCUMENT);
+				link.setLocation("#服务识别!A1");
+				cell.setHyperlink(link);
+                
+                
                 cell.setCellStyle(cellStyle);
                 
                 
                 String value = cellList.get(cellIdx);
                 cell.setCellValue(value);
+                
+                
+                /*
+                 * 对原有样式进行修改，先创建，再复制，再个性化，最后设置
+                CellStyle cellStyle = wb.createCellStyle();
+				cellStyle.cloneStyleFrom(cell.getCellStyle());
+				// 设置单元格背景颜色
+				cellStyle.setFillForegroundColor(HSSFColor.YELLOW.index);
+				// 设置填充格式,具体见FillPatternType
+				cellStyle.setFillPattern((short) 1);
+				cell.setCellStyle(cellStyle);*/
             }
         }
         

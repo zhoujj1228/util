@@ -19,6 +19,29 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
 public class XmlUtil {
+	
+	public static void main(String[] args) {
+		String path = "D:\\Test\\xml\\test1.xml";
+		File file = new File(path);
+		Document document = createDocument();
+		Element createRootElement = createRootElement(document, "Test");
+		createAttribute(createRootElement, "name", "rootName");
+		createElementByName("Test1", createRootElement);
+		System.out.println(document.getRootElement().asXML());
+		XmlUtil.createXmlFile(document, file, "UTF-8");
+		
+	}
+	
+	public static Document createDocument(){
+		return DocumentHelper.createDocument();
+	}
+	
+	
+	public static Element createRootElement(Document document, String rootElementName){
+		return document.addElement(rootElementName);
+	}
+	
+	
 	/**
 	 * 得到最后一个节点，但是如果有相同节点是使用第一个节点
 	 * @param nodes	下属的节点

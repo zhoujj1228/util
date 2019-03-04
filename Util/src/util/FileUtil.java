@@ -51,6 +51,113 @@ public class FileUtil {
 		itorFilePathMap(fileSubPathMap, off);
 	}
 	
+	/**
+	 * 结果中数字以整形返回
+	 * @param excelPath
+	 * @param beginRow
+	 * @param beginLie
+	 * @return
+	 */
+	public static HashMap<String, List<List<String>>> getSheetNameMapNumAsInt(String excelPath, int beginRow, int beginLie) {
+		org.apache.poi.ss.usermodel.Workbook wb = null;
+		HashMap<String, List<List<String>>> sheetNameListMap = new HashMap<String, List<List<String>>>();
+		ArrayList<String> rowList = null;
+		try {
+			File file = new File(excelPath);
+			wb =  WorkbookFactory.create(new FileInputStream(file));
+			int sheetCount = wb.getNumberOfSheets();
+			//System.out.println(sheetCount);
+			for(int sheetNum = 0; sheetNum < sheetCount; sheetNum++){
+				
+				Sheet sheet = wb.getSheetAt(sheetNum);
+				String sheetName = sheet.getSheetName();
+				List<List<String>> allList = new ArrayList<List<String>>();
+				
+				for(int i = beginRow; i < sheet.getPhysicalNumberOfRows(); i++){
+					Row row = sheet.getRow(i);
+					if(row == null){
+						//System.out.println("null页"+sheetNum+"行"+i);
+						continue;
+					}
+					rowList = new ArrayList<String>();
+					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
+						Cell cell = row.getCell(j);
+						if(cell==null){
+							//System.out.println("null页"+sheetNum+"行"+i+"列"+j);
+							rowList.add("");
+							continue;
+						}
+						String s = getCellStringNumAsInt(cell);
+						rowList.add(s);
+						
+					}
+					allList.add(rowList);
+				}
+				
+				sheetNameListMap.put(sheetName, allList);
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			try {
+				if(wb != null){
+					wb.close();
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				
+			}
+		}
+		/*for(ArrayList<String> list : allList){
+			System.out.println();
+			for(String s : list){
+				System.out.print(s+" ");
+			}
+		}*/
+		
+		
+		return sheetNameListMap;
+	}
+	
+	private static String getCellStringNumAsInt(Cell cell) throws Exception {
+
+		String result = null;
+		if(cell != null){
+			switch(cell.getCellType()){
+			case Cell.CELL_TYPE_STRING:
+				result = cell.getStringCellValue();
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				Boolean temp = cell.getBooleanCellValue();
+				result = temp.toString();
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				if(DateUtil.isCellDateFormatted(cell)){
+					Date cellDate = cell.getDateCellValue();
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					result = sdf.format(cellDate);
+				}else{
+					result = (int)cell.getNumericCellValue() + "";
+				}
+				break;
+			case Cell.CELL_TYPE_BLANK:
+			    result = "";
+				break;
+			case Cell.CELL_TYPE_FORMULA:
+				//System.out.println("FORMULA类型默认设置为String:rowindex=" + cell.getRowIndex() + " colindex=" + cell.getColumnIndex());
+			    result = cell.getStringCellValue();
+				break;
+			default:
+				throw new Exception("数据类型不正确:rowindex=" + cell.getRowIndex() + " colindex=" + cell.getColumnIndex());
+			}
+		}
+		return result;
+	}
+	
+	
 	public static void itorFilePathMap(TreeMap<?, TreeMap> fileSubPathMap, String off) {
 		Set<String> keySet = (Set<String>) fileSubPathMap.keySet();
 		for(String name : keySet){
@@ -485,10 +592,10 @@ public class FileUtil {
 			XSSFSheet sheet = wb.getSheetAt(0);
 			rowList = new ArrayList<ArrayList<String>>();
 			ArrayList<String> cellList = null;
-			for(int i = 0; i < sheet.getLastRowNum(); i++){
+			for(int i = 0; i < sheet.getLastRowNum() + 1; i++){
 				XSSFRow row = sheet.getRow(i);
 				cellList = new ArrayList<String>();
-				for(int j = 0; j < row.getLastCellNum(); j++){
+				for(int j = 0; j < row.getLastCellNum() + 1; j++){
 					if(row != null){
 						XSSFCell cell = row.getCell(j);
 						if(cell==null){
@@ -620,7 +727,7 @@ public class FileUtil {
 						continue;
 					}
 					rowList = new ArrayList<String>();
-					for(int j = beginLie ; j < row.getLastCellNum(); j++){
+					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
 						Cell cell = row.getCell(j);
 						if(cell==null){
 							System.out.println("null页"+sheetNum+"行"+i+"列"+j);
@@ -670,9 +777,9 @@ public class FileUtil {
 				XSSFSheet sheet = wb.getSheetAt(sheetNum);
 				rowList = new ArrayList<String>();
 				
-				for(int i = beginRow; i < sheet.getLastRowNum(); i++){
+				for(int i = beginRow; i < sheet.getLastRowNum() + 1; i++){
 					XSSFRow row = sheet.getRow(i);
-					for(int j = beginLie ; j < row.getLastCellNum(); j++){
+					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
 						XSSFCell cell = row.getCell(j);
 						String s = getCellString(cell);
                         rowList.add(s);
@@ -874,7 +981,7 @@ public class FileUtil {
 						continue;
 					}
 					rowList = new ArrayList<String>();
-					for(int j = beginLie ; j < row.getLastCellNum(); j++){
+					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
 						Cell cell = row.getCell(j);
 						if(cell==null){
 							System.out.println("null页"+sheetNum+"行"+i+"列"+j);
@@ -1069,7 +1176,7 @@ public class FileUtil {
 						continue;
 					}
 					rowList = new ArrayList<String>();
-					for(int j = beginLie ; j < row.getLastCellNum(); j++){
+					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
 						Cell cell = row.getCell(j);
 						if(cell==null){
 							//System.out.println("null页"+sheetNum+"行"+i+"列"+j);
@@ -1111,7 +1218,7 @@ public class FileUtil {
 		return sheetNameListMap;
 	}
 
-	private static String getCellString(Cell cell) throws Exception {
+	public static String getCellString(Cell cell) throws Exception {
 		String result = null;
 		if(cell != null){
 			switch(cell.getCellType()){
@@ -1134,13 +1241,97 @@ public class FileUtil {
 			case Cell.CELL_TYPE_BLANK:
 			    result = "";
 				break;
+			case Cell.CELL_TYPE_FORMULA:
+				System.out.println("FORMULA类型默认设置为String:rowindex=" + cell.getRowIndex() + " colindex=" + cell.getColumnIndex());
+			    result = cell.getStringCellValue();
+				break;
 			default:
-				throw new Exception("数据类型不正确");
+				throw new Exception("数据类型不正确:rowindex=" + cell.getRowIndex() + " colindex=" + cell.getColumnIndex());
 			}
 		}
 		return result;
 	}
 	
+	
+	public static List<List<String>> getListBy03OR07ExcelAndSheetNames(String excelPath, List<String> list, int beginRow, int beginLie) {
+
+		org.apache.poi.ss.usermodel.Workbook wb = null;
+		ArrayList<String> rowList = null;
+		List<List<String>> allList = new ArrayList<List<String>>();
+		try {
+			File file = new File(excelPath);
+			wb =  WorkbookFactory.create(new FileInputStream(file));
+			
+			for(String sheetName : list){
+				Sheet sheet = wb.getSheet(sheetName);
+				for(int i = beginRow; i < sheet.getPhysicalNumberOfRows(); i++){
+					Row row = sheet.getRow(i);
+					if(row == null){
+						System.out.println("null页"+sheetName+"行"+i);
+						continue;
+					}
+					rowList = new ArrayList<String>();
+					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
+						Cell cell = row.getCell(j);
+						if(cell==null){
+							System.out.println("null页"+sheetName+"行"+i+"列"+j);
+							rowList.add("");
+							continue;
+						}
+						String s = getCellString(cell);
+                        rowList.add(s);
+						
+					}
+					allList.add(rowList);
+				}
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			try {
+				if(wb != null){
+					wb.close();
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				
+			}
+		}
+		/*for(ArrayList<String> list : allList){
+			System.out.println();
+			for(String s : list){
+				System.out.print(s+" ");
+			}
+		}*/
+		
+		
+		return allList;
+	}
+	
+	public static byte[] readBytesByFile(File file){
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			int len = 1024;
+			byte[] buffer = new byte[1024];
+			int readlen = 0;
+			while((readlen = fis.read(buffer, 0, len)) > 0){
+				bos.write(buffer, 0, readlen);
+			}
+			byte[] bytes = bos.toByteArray();
+			fis.close();
+			bos.close();
+			return bytes;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
 
 

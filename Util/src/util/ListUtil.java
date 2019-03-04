@@ -14,10 +14,11 @@ public class ListUtil {
 		if(list == null || list.size() == 0){
 			return null;
 		}
-		String result = list.get(0);
+		StringBuilder result = new StringBuilder(list.get(0));
 		for (int i = 1; i < list.size(); i++) {
-			result = result + flag + list.get(i);
+			//result = result + flag + list.get(i);
+			result.append(flag + list.get(i));
 		}
-		return result;
+		return result.toString();
 	}
 }
