@@ -2,7 +2,6 @@ package util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,37 +12,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import jxl.Workbook;
-import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-import util.domain.ExcelSheetDomain;
 
 public class FileUtil {
 
+	@SuppressWarnings("rawtypes")
 	public static void main(String[] args){
 		File file = new File("E:\\备份\\");
 		TreeMap<String, TreeMap> fileSubPathMap = getFileSubPath(file, false);
@@ -51,113 +31,10 @@ public class FileUtil {
 		itorFilePathMap(fileSubPathMap, off);
 	}
 	
-	/**
-	 * 结果中数字以整形返回
-	 * @param excelPath
-	 * @param beginRow
-	 * @param beginLie
-	 * @return
-	 */
-	public static HashMap<String, List<List<String>>> getSheetNameMapNumAsInt(String excelPath, int beginRow, int beginLie) {
-		org.apache.poi.ss.usermodel.Workbook wb = null;
-		HashMap<String, List<List<String>>> sheetNameListMap = new HashMap<String, List<List<String>>>();
-		ArrayList<String> rowList = null;
-		try {
-			File file = new File(excelPath);
-			wb =  WorkbookFactory.create(new FileInputStream(file));
-			int sheetCount = wb.getNumberOfSheets();
-			//System.out.println(sheetCount);
-			for(int sheetNum = 0; sheetNum < sheetCount; sheetNum++){
-				
-				Sheet sheet = wb.getSheetAt(sheetNum);
-				String sheetName = sheet.getSheetName();
-				List<List<String>> allList = new ArrayList<List<String>>();
-				
-				for(int i = beginRow; i < sheet.getPhysicalNumberOfRows(); i++){
-					Row row = sheet.getRow(i);
-					if(row == null){
-						//System.out.println("null页"+sheetNum+"行"+i);
-						continue;
-					}
-					rowList = new ArrayList<String>();
-					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
-						Cell cell = row.getCell(j);
-						if(cell==null){
-							//System.out.println("null页"+sheetNum+"行"+i+"列"+j);
-							rowList.add("");
-							continue;
-						}
-						String s = getCellStringNumAsInt(cell);
-						rowList.add(s);
-						
-					}
-					allList.add(rowList);
-				}
-				
-				sheetNameListMap.put(sheetName, allList);
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally{
-			try {
-				if(wb != null){
-					wb.close();
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			}
-		}
-		/*for(ArrayList<String> list : allList){
-			System.out.println();
-			for(String s : list){
-				System.out.print(s+" ");
-			}
-		}*/
-		
-		
-		return sheetNameListMap;
-	}
-	
-	private static String getCellStringNumAsInt(Cell cell) throws Exception {
-
-		String result = null;
-		if(cell != null){
-			switch(cell.getCellType()){
-			case Cell.CELL_TYPE_STRING:
-				result = cell.getStringCellValue();
-				break;
-			case Cell.CELL_TYPE_BOOLEAN:
-				Boolean temp = cell.getBooleanCellValue();
-				result = temp.toString();
-				break;
-			case Cell.CELL_TYPE_NUMERIC:
-				if(DateUtil.isCellDateFormatted(cell)){
-					Date cellDate = cell.getDateCellValue();
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					result = sdf.format(cellDate);
-				}else{
-					result = (int)cell.getNumericCellValue() + "";
-				}
-				break;
-			case Cell.CELL_TYPE_BLANK:
-			    result = "";
-				break;
-			case Cell.CELL_TYPE_FORMULA:
-				//System.out.println("FORMULA类型默认设置为String:rowindex=" + cell.getRowIndex() + " colindex=" + cell.getColumnIndex());
-			    result = cell.getStringCellValue();
-				break;
-			default:
-				throw new Exception("数据类型不正确:rowindex=" + cell.getRowIndex() + " colindex=" + cell.getColumnIndex());
-			}
-		}
-		return result;
-	}
 	
 	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void itorFilePathMap(TreeMap<?, TreeMap> fileSubPathMap, String off) {
 		Set<String> keySet = (Set<String>) fileSubPathMap.keySet();
 		for(String name : keySet){
@@ -175,10 +52,10 @@ public class FileUtil {
 	 * @param isNeedFile
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public static TreeMap<String, TreeMap> getFileSubPath(File supFile, boolean isNeedFile){
 		TreeMap<String, TreeMap> result = new TreeMap<String, TreeMap>();
 		File[] listFiles = supFile.listFiles();
-		int i = 1;
 		for(File file : listFiles){
 			if(!isNeedFile && !file.isDirectory()){
 				continue;
@@ -251,18 +128,35 @@ public class FileUtil {
 	 * @return 文件内容（String）
 	 */
 	public static boolean copyFile(File fromFile, File toFile){
+		FileInputStream input = null;
+		FileOutputStream output = null;
 		try {
-			FileInputStream input = new FileInputStream(fromFile);
-			FileOutputStream output = new FileOutputStream(toFile);
+			input = new FileInputStream(fromFile);
+			output = new FileOutputStream(toFile);
 			int in = input.read();
 			while(in != -1){
 				output.write(in);
 				in = input.read();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 			return false;
+		} finally{
+			if(input != null){
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(output != null){
+				try {
+					output.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return true;
 	}
@@ -316,7 +210,7 @@ public class FileUtil {
 			fw.write(data);
 			fw.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 			return false;
 		} finally{
@@ -324,7 +218,7 @@ public class FileUtil {
 				try {
 					fw.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -338,7 +232,7 @@ public class FileUtil {
 			fw.write(data);
 			fw.flush();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 			return false;
 		} finally{
@@ -346,7 +240,7 @@ public class FileUtil {
 				try {
 					fw.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -457,103 +351,9 @@ public class FileUtil {
 		return result;
 	}
 	
-	/**
-	 * 根据excel文件路径得到一个可写的Workbook
-	 * @param excelPath 文件路径
-	 * @return 一个可写的Workbook
-	 */
-	public static WritableWorkbook getWriteExcel(String excelPath){
-		InputStream is = null;
-		Workbook readwb;
-		WritableWorkbook writewb = null;
-		try {
-			is = new FileInputStream(excelPath);
-			readwb = Workbook.getWorkbook(is);
-			writewb = Workbook.createWorkbook(new File(excelPath), readwb);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		/*后续用法如下
-		writewb = Workbook.createWorkbook(new File(excelPath));
-		writewb.createSheet("接口清单", 0);
-		WritableSheet sheet = writewb.getSheet(0);
-		Label label = new Label(lie, hang, data);
-		sheet.addCell(label);
-		wwb.write();
-		wwb.close();*/
-		return writewb;
-	}
 	
-	/**
-	 * 根据excel文件路径得到一个可写的Workbook
-	 * @param excelPath 文件路径
-	 * @return 一个可写的Workbook
-	 */
-	public static boolean writeExcelByList(String excelPath, List<List<String>> lists){
-		InputStream is = null;
-		Workbook readwb;
-		WritableWorkbook writewb = null;
-		try {
-			is = new FileInputStream(excelPath);
-			readwb = Workbook.getWorkbook(is);
-			writewb = Workbook.createWorkbook(new File(excelPath), readwb);
-			writewb = Workbook.createWorkbook(new File(excelPath));
-			writewb.createSheet("sheet1", 0);
-			WritableSheet sheet = writewb.getSheet(0);
-			for(int i = 0; i < lists.size(); i++){
-				List<String> list = lists.get(i);
-				for(int j = 0; j < list.size(); j++){
-					Label label = new Label(j, i, list.get(j));
-					sheet.addCell(label);
-				}
-			}
-			writewb.write();
-			writewb.close();
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
 	
-	/**
-     * 根据excel文件路径得到一个可写的Workbook
-     * @param excelPath 文件路径
-     * @return 一个可写的Workbook
-     */
-    public static boolean writeExcelByMap(String excelPath, HashMap<String, List<List<String>>> map){
-        InputStream is = null;
-        Workbook readwb;
-        WritableWorkbook writewb = null;
-        try {
-            is = new FileInputStream(excelPath);
-            readwb = Workbook.getWorkbook(is);
-            writewb = Workbook.createWorkbook(new File(excelPath), readwb);
-            writewb = Workbook.createWorkbook(new File(excelPath));
-            int sheetNum = 0;
-            for(String key : map.keySet()){
-                List<List<String>> lists = map.get(key);
-                WritableSheet sheet = writewb.createSheet(key, sheetNum++);
-                //WritableSheet sheet = writewb.getSheet(0);
-                for(int i = 0; i < lists.size(); i++){
-                    List<String> list = lists.get(i);
-                    for(int j = 0; j < list.size(); j++){
-                        Label label = new Label(j, i, list.get(j));
-                        sheet.addCell(label);
-                    }
-                }
-            }
-
-            writewb.write();
-            writewb.close();
-            return true;
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+	
 	
 	/**
 	 * 
@@ -580,239 +380,9 @@ public class FileUtil {
 		return retData;
 	}
 	
-	public static ArrayList<ArrayList<String>> readExcelAllData(File file) {
-		// TODO Auto-generated method stub
-		String[][] excelAllData = null;
-		ArrayList<ArrayList<String>> rowList = null;
-		FileInputStream input = null;
-		XSSFWorkbook wb = null;
-		try {
-			input = new FileInputStream(file);
-			wb = new XSSFWorkbook(new BufferedInputStream(input));
-			XSSFSheet sheet = wb.getSheetAt(0);
-			rowList = new ArrayList<ArrayList<String>>();
-			ArrayList<String> cellList = null;
-			for(int i = 0; i < sheet.getLastRowNum() + 1; i++){
-				XSSFRow row = sheet.getRow(i);
-				cellList = new ArrayList<String>();
-				for(int j = 0; j < row.getLastCellNum() + 1; j++){
-					if(row != null){
-						XSSFCell cell = row.getCell(j);
-						if(cell==null){
-						    cellList.add("");
-                            continue;
-                        }
-                        String s = getCellString(cell);
-                        cellList.add(s);
-					}
-					
-				}
-				rowList.add(cellList);
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			try {
-				wb.close();
-				input.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		
-		
-		/*for(ArrayList<String> list : rowList){
-			System.out.println(list.size());
-			for(String s : list){
-				System.out.print("   "+s);
-			}
-		}*/
-		return rowList;
-	}
-	/**
-	 * 只返回有效的行列值（空值不返回），原版
-	 * @param excelPath
-	 * @param beginRow
-	 * @param beginLie
-	 * @return
-	 */
-	public static List<List<String>> getListBy03OR07ExcelPhysical(String excelPath, int beginRow, int beginLie) {
-		org.apache.poi.ss.usermodel.Workbook wb = null;
-		ArrayList<String> rowList = null;
-		List<List<String>> allList = new ArrayList<List<String>>();
-		try {
-			File file = new File(excelPath);
-			wb =  WorkbookFactory.create(new FileInputStream(file));
-			int sheetCount = wb.getNumberOfSheets();
-			System.out.println(sheetCount);
-			for(int sheetNum = 0; sheetNum < sheetCount; sheetNum++){
-				
-				Sheet sheet = wb.getSheetAt(sheetNum);
-				
-				
-				for(int i = beginRow; i < sheet.getPhysicalNumberOfRows(); i++){
-					Row row = sheet.getRow(i);
-					if(row == null){
-						System.out.println("null页"+sheetNum+"行"+i);
-						continue;
-					}
-					rowList = new ArrayList<String>();
-					for(int j = beginLie ; j < row.getPhysicalNumberOfCells(); j++){
-						Cell cell = row.getCell(j);
-						if(cell==null){
-							System.out.println("null页"+sheetNum+"行"+i+"列"+j);
-							continue;
-						}
-						String s = getCellString(cell);
-                        rowList.add(s);
-						
-					}
-					allList.add(rowList);
-				}
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally{
-			try {
-				if(wb != null){
-					wb.close();
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			}
-		}
-		/*for(ArrayList<String> list : allList){
-			System.out.println();
-			for(String s : list){
-				System.out.print(s+" ");
-			}
-		}*/
-		
-		
-		return allList;
-	}
 	
-	/**
-	 * 返回包括空值的行列，更新版
-	 * @param excelPath
-	 * @param beginRow
-	 * @param beginLie
-	 * @return
-	 */
-	public static List<List<String>> getListBy03OR07Excel(String excelPath, int beginRow, int beginLie) {
-		org.apache.poi.ss.usermodel.Workbook wb = null;
-		ArrayList<String> rowList = null;
-		List<List<String>> allList = new ArrayList<List<String>>();
-		try {
-			File file = new File(excelPath);
-			wb =  WorkbookFactory.create(new FileInputStream(file));
-			int sheetCount = wb.getNumberOfSheets();
-			System.out.println(sheetCount);
-			for(int sheetNum = 0; sheetNum < sheetCount; sheetNum++){
-				
-				Sheet sheet = wb.getSheetAt(sheetNum);
-				
-				
-				for(int i = beginRow; i < sheet.getPhysicalNumberOfRows(); i++){
-					Row row = sheet.getRow(i);
-					if(row == null){
-						System.out.println("null页"+sheetNum+"行"+i);
-						continue;
-					}
-					rowList = new ArrayList<String>();
-					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
-						Cell cell = row.getCell(j);
-						if(cell==null){
-							System.out.println("null页"+sheetNum+"行"+i+"列"+j);
-							rowList.add("");
-							continue;
-						}
-						String s = getCellString(cell);
-                        rowList.add(s);
-						
-					}
-					allList.add(rowList);
-				}
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally{
-			try {
-				if(wb != null){
-					wb.close();
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			}
-		}
-		/*for(ArrayList<String> list : allList){
-			System.out.println();
-			for(String s : list){
-				System.out.print(s+" ");
-			}
-		}*/
-		
-		
-		return allList;
-	}
 	
-	public static ArrayList<ArrayList<String>> getListBy07Excel(String excelPath, int beginRow, int beginLie, int sheetCount) {
-		XSSFWorkbook wb = null;
-		ArrayList<String> rowList = null;
-		ArrayList<ArrayList<String>> allList = new ArrayList<ArrayList<String>>();
-		try {
-			wb =  new XSSFWorkbook(excelPath);
-			for(int sheetNum = 0; sheetNum < sheetCount; sheetNum++){
-				XSSFSheet sheet = wb.getSheetAt(sheetNum);
-				rowList = new ArrayList<String>();
-				
-				for(int i = beginRow; i < sheet.getLastRowNum() + 1; i++){
-					XSSFRow row = sheet.getRow(i);
-					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
-						XSSFCell cell = row.getCell(j);
-						String s = getCellString(cell);
-                        rowList.add(s);
-					}
-					
-				}
-				allList.add(rowList);
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally{
-			try {
-				if(wb != null){
-					wb.close();
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			}
-		}
-		for(ArrayList<String> list : allList){
-			System.out.println();
-			for(String s : list){
-				System.out.print(s + " ");
-			}
-		}
-		
-		
-		return allList;
-	}
+	
 	
 	public static String readByFileWithEncoding(File file,String encoding){
 		String result = null;
@@ -877,7 +447,7 @@ public class FileUtil {
 			fw1 = new FileWriter(file);
 			fw1.write(s);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} finally{
 			if(fw1 != null){
@@ -897,7 +467,7 @@ public class FileUtil {
 			fw2 = new FileWriter(file,true);
 			fw2.write(s);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} finally{
 			if(fw2 != null){
@@ -918,7 +488,7 @@ public class FileUtil {
 			fos.write(s.getBytes(encode));
 			fos.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} finally{
 			if(fos != null){
@@ -957,70 +527,7 @@ public class FileUtil {
 		return results;
 	}
 	
-	public static List<ExcelSheetDomain> getSheetDomainBy03OR07Excel(String excelPath, int beginRow, int beginLie) {
-		List<ExcelSheetDomain> result = new ArrayList<ExcelSheetDomain>();
-		org.apache.poi.ss.usermodel.Workbook wb = null;
-		ArrayList<String> rowList = null;
-		List<List<String>> allList = null;
-		try {
-			File file = new File(excelPath);
-			wb =  WorkbookFactory.create(new FileInputStream(file));
-			int sheetCount = wb.getNumberOfSheets();
-			//System.out.println(sheetCount);
-			ExcelSheetDomain esd;
-			for(int sheetNum = 0; sheetNum < sheetCount; sheetNum++){
-				
-				Sheet sheet = wb.getSheetAt(sheetNum);
-				esd = new ExcelSheetDomain();
-				esd.setSheetName(sheet.getSheetName());
-				allList = new ArrayList<List<String>>();
-				for(int i = beginRow; i < sheet.getPhysicalNumberOfRows(); i++){
-					Row row = sheet.getRow(i);
-					if(row == null){
-						System.out.println("null页"+sheetNum+"行"+i);
-						continue;
-					}
-					rowList = new ArrayList<String>();
-					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
-						Cell cell = row.getCell(j);
-						if(cell==null){
-							System.out.println("null页"+sheetNum+"行"+i+"列"+j);
-							rowList.add("");
-							continue;
-						}
-						String s = getCellString(cell);
-                        rowList.add(s);
-						
-					}
-					allList.add(rowList);
-				}
-				esd.setDataList(allList);
-				result.add(esd);
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally{
-			try {
-				if(wb != null){
-					wb.close();
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			}
-		}
-		/*for(ArrayList<String> list : allList){
-			System.out.println();
-			for(String s : list){
-				System.out.print(s+" ");
-			}
-		}*/
-		
-		
-		return result;
-	}
+	
 	
 	public static File createFile(String path){
 		File file = new File(path);
@@ -1048,29 +555,8 @@ public class FileUtil {
 		return file;
 	}
 	
-	public static WritableWorkbook createNewExcel03(String excelPath) {
-		WritableWorkbook writewb = null;
-		try {
-			writewb = Workbook.createWorkbook(new File(excelPath));
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
-		return writewb;
-	}
 	
-	public static void readExcel07Limit(String excelPath, int rowAccessWindowSize, int beginRow, int beginLie){
-		XSSFWorkbook workbook = null;
-		try {
-			workbook = new XSSFWorkbook(excelPath);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-		SXSSFWorkbook writewb = new SXSSFWorkbook(workbook, rowAccessWindowSize);
-		
-		
-	}
+	
 	public static String readByFileWithEncodingWithLineBreak(File file,String encoding){
 		String result = null;
 		FileInputStream is =null;
@@ -1127,7 +613,7 @@ public class FileUtil {
 			bytes = bos.toByteArray();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return bytes;
@@ -1148,168 +634,17 @@ public class FileUtil {
 			bytes = bos.toByteArray();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return bytes;
 	}
 	
-	public static HashMap<String, List<List<String>>> getSheetNameMapBy03OR07Excel(String excelPath, int beginRow, int beginLie) {
-		org.apache.poi.ss.usermodel.Workbook wb = null;
-		HashMap<String, List<List<String>>> sheetNameListMap = new HashMap<String, List<List<String>>>();
-		ArrayList<String> rowList = null;
-		try {
-			File file = new File(excelPath);
-			wb =  WorkbookFactory.create(new FileInputStream(file));
-			int sheetCount = wb.getNumberOfSheets();
-			//System.out.println(sheetCount);
-			for(int sheetNum = 0; sheetNum < sheetCount; sheetNum++){
-				
-				Sheet sheet = wb.getSheetAt(sheetNum);
-				String sheetName = sheet.getSheetName();
-				List<List<String>> allList = new ArrayList<List<String>>();
-				
-				for(int i = beginRow; i < sheet.getPhysicalNumberOfRows(); i++){
-					Row row = sheet.getRow(i);
-					if(row == null){
-						//System.out.println("null页"+sheetNum+"行"+i);
-						continue;
-					}
-					rowList = new ArrayList<String>();
-					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
-						Cell cell = row.getCell(j);
-						if(cell==null){
-							//System.out.println("null页"+sheetNum+"行"+i+"列"+j);
-							rowList.add("");
-							continue;
-						}
-						String s = getCellString(cell);
-						rowList.add(s);
-						
-					}
-					allList.add(rowList);
-				}
-				
-				sheetNameListMap.put(sheetName, allList);
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally{
-			try {
-				if(wb != null){
-					wb.close();
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			}
-		}
-		/*for(ArrayList<String> list : allList){
-			System.out.println();
-			for(String s : list){
-				System.out.print(s+" ");
-			}
-		}*/
-		
-		
-		return sheetNameListMap;
-	}
-
-	public static String getCellString(Cell cell) throws Exception {
-		String result = null;
-		if(cell != null){
-			switch(cell.getCellType()){
-			case Cell.CELL_TYPE_STRING:
-				result = cell.getStringCellValue();
-				break;
-			case Cell.CELL_TYPE_BOOLEAN:
-				Boolean temp = cell.getBooleanCellValue();
-				result = temp.toString();
-				break;
-			case Cell.CELL_TYPE_NUMERIC:
-				if(DateUtil.isCellDateFormatted(cell)){
-					Date cellDate = cell.getDateCellValue();
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					result = sdf.format(cellDate);
-				}else{
-					result = cell.getNumericCellValue() + "";
-				}
-				break;
-			case Cell.CELL_TYPE_BLANK:
-			    result = "";
-				break;
-			case Cell.CELL_TYPE_FORMULA:
-				System.out.println("FORMULA类型默认设置为String:rowindex=" + cell.getRowIndex() + " colindex=" + cell.getColumnIndex());
-			    result = cell.getStringCellValue();
-				break;
-			default:
-				throw new Exception("数据类型不正确:rowindex=" + cell.getRowIndex() + " colindex=" + cell.getColumnIndex());
-			}
-		}
-		return result;
-	}
 	
 	
-	public static List<List<String>> getListBy03OR07ExcelAndSheetNames(String excelPath, List<String> list, int beginRow, int beginLie) {
-
-		org.apache.poi.ss.usermodel.Workbook wb = null;
-		ArrayList<String> rowList = null;
-		List<List<String>> allList = new ArrayList<List<String>>();
-		try {
-			File file = new File(excelPath);
-			wb =  WorkbookFactory.create(new FileInputStream(file));
-			
-			for(String sheetName : list){
-				Sheet sheet = wb.getSheet(sheetName);
-				for(int i = beginRow; i < sheet.getPhysicalNumberOfRows(); i++){
-					Row row = sheet.getRow(i);
-					if(row == null){
-						System.out.println("null页"+sheetName+"行"+i);
-						continue;
-					}
-					rowList = new ArrayList<String>();
-					for(int j = beginLie ; j < row.getLastCellNum() + 1; j++){
-						Cell cell = row.getCell(j);
-						if(cell==null){
-							System.out.println("null页"+sheetName+"行"+i+"列"+j);
-							rowList.add("");
-							continue;
-						}
-						String s = getCellString(cell);
-                        rowList.add(s);
-						
-					}
-					allList.add(rowList);
-				}
-			}
-			
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally{
-			try {
-				if(wb != null){
-					wb.close();
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				
-			}
-		}
-		/*for(ArrayList<String> list : allList){
-			System.out.println();
-			for(String s : list){
-				System.out.print(s+" ");
-			}
-		}*/
-		
-		
-		return allList;
-	}
+	
+	
+	
 	
 	public static byte[] readBytesByFile(File file){
 		try {

@@ -37,7 +37,7 @@ public class BigExcelWriterUtil {
 public static void main(String[] args) throws Exception {
 		String sfilePath = "C:/Users/Administrator/Desktop/周家炬/保存/字段映射文档-南粤POS收单系统.xlsx";
 		String filePath = "C:/Users/Administrator/Desktop/周家炬/保存/temp2.xlsx";
-		List<List<String>> lists = FileUtil.getListBy03OR07ExcelPhysical(sfilePath, 0, 0);
+		List<List<String>> lists = ExcelUtil.getListBy03OR07ExcelPhysical(sfilePath, 0, 0);
 		writeBigExcel(new File(filePath), lists);
 	}
 	

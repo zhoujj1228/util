@@ -141,7 +141,14 @@ public class ReflectionUtil {
 		return superclass;
 	}
 	
-	
-	
+	/**
+	 * 获取所有的属性, getFields()只能获取到public的属性
+	 * @param cl
+	 * @return
+	 */
+	public static Field[] getAllField(Class<?> cl){
+		Field[] fields = cl.getDeclaredFields();
+		return fields;
+	}
 	
 }

@@ -37,7 +37,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class Excel07Util {
     public static void main(String[] args) {
         File file = new File("D:/Test/excel/test2.xlsx");
-        HashMap<String, List<List<String>>> map= FileUtil.getSheetNameMapBy03OR07Excel("D:/Test/excel/t.xls", 0, 0);
+        HashMap<String, List<List<String>>> map= ExcelUtil.getSheetNameMapBy03OR07Excel("D:/Test/excel/t.xls", 0, 0);
         writeNewExcelByMap(file, map);
     }
     public static boolean writeNewExcelByMapAndFlag(File file, HashMap<String, List<String>> map, String flag){
@@ -447,8 +447,8 @@ public class Excel07Util {
 	}
     
     public static void compareTwoExcel(File oldexcel, File newexcel){
-    	HashMap<String, List<List<String>>> oldSheetNameMap = FileUtil.getSheetNameMapBy03OR07Excel(oldexcel.getAbsolutePath(), 0, 0);
-    	HashMap<String, List<List<String>>> newSheetNameMap = FileUtil.getSheetNameMapBy03OR07Excel(newexcel.getAbsolutePath(), 0, 0);
+    	HashMap<String, List<List<String>>> oldSheetNameMap = ExcelUtil.getSheetNameMapBy03OR07Excel(oldexcel.getAbsolutePath(), 0, 0);
+    	HashMap<String, List<List<String>>> newSheetNameMap = ExcelUtil.getSheetNameMapBy03OR07Excel(newexcel.getAbsolutePath(), 0, 0);
     	
     	//对比表格数
     	Set<String> oldkeySet = oldSheetNameMap.keySet();
@@ -569,7 +569,7 @@ public class Excel07Util {
 				if (cell.getColumnIndex() >= firstC && cell.getColumnIndex() <= lastC) {
 					Row fRow = sheet.getRow(firstR);
 					Cell fCell = fRow.getCell(firstC);
-					cellValue = FileUtil.getCellString(fCell);
+					cellValue = ExcelUtil.getCellString(fCell);
 					break;
 				}
 			} else {
@@ -602,7 +602,7 @@ public class Excel07Util {
 					Row fRow = sheet.getRow(firstRow);
 					Cell fCell = fRow.getCell(firstColumn);
 					try {
-						return FileUtil.getCellString(fCell);
+						return ExcelUtil.getCellString(fCell);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -708,7 +708,7 @@ public class Excel07Util {
 			int firstRow = ca.getFirstRow();
 			int lastRow = ca.getLastRow();
 			Cell cell = sheet.getRow(firstRow).getCell(firstColumn);
-			String value = FileUtil.getCellString(cell);
+			String value = ExcelUtil.getCellString(cell);
 			for (int j = firstColumn; j < lastColumn + 1; j++) {
 				for (int k = firstRow; k < lastRow + 1; k++) {
 					String key = sheetName + "-" + k + "-" +j;
@@ -751,7 +751,7 @@ public class Excel07Util {
 				if(mergedRegionValueMap.containsKey(cellIndex)){
 					s = mergedRegionValueMap.get(cellIndex);
 				}else{
-					s = FileUtil.getCellString(cell);
+					s = ExcelUtil.getCellString(cell);
 				}
 				rowList.add(s);
 				
@@ -759,5 +759,10 @@ public class Excel07Util {
 			allList.add(rowList);
 		}
 		return allList;
+	}
+	
+	
+	public void copySheetToExcel(File source, String sheetName, File target) {
+		
 	}
 }

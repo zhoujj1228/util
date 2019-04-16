@@ -147,4 +147,28 @@ public class StringUtil {
 		return result;
 	}
 	
+	/**
+	 * 转换驼峰字符串为数据库字符串
+	 * 如myHashMap转为MY_HASH_MAP
+	 * @param str
+	 * @return
+	 */
+	public static String changeCamelStrToDBStr(String str) {
+		char[] charArray = str.toCharArray();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < charArray.length; i++) {
+			int lastIndex = i - 1;
+			if (Character.isUpperCase(charArray[i])) {
+				if(lastIndex > -1){
+					if (Character.isLowerCase(charArray[lastIndex])) {
+						sb.append("_");
+					}
+				}else{
+					//代表是首字母
+				}
+			}
+			sb.append(charArray[i]);
+		}
+		return sb.toString().toUpperCase();
+	}
 }

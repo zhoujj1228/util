@@ -12,6 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+
 public class TCPUtil {
 
 	public static void main(String[] args) throws UnsupportedEncodingException {
@@ -105,14 +106,6 @@ public class TCPUtil {
 				e.printStackTrace();
 				System.out.println("server end");
 				shutdown = true;
-			} finally{
-				if(socket != null){
-					try {
-						socket.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
 			}
 			
 			
@@ -185,6 +178,36 @@ public class TCPUtil {
 		}
 		return bos.toByteArray();
 	}
+	
+	private static byte[] readContentByLen(InputStream is, int headLength)
+			throws IOException {
+		byte[] headData = readLenContent(is, headLength);
+		// 获得交易长度
+		int length = Integer.parseInt(new String(headData));
+		// 按指定长度读取报文
+		byte[] reqData = readLenContent(is, length);
+		
+		return reqData;
+	}
+	
+	private static byte[] readLenContent(InputStream is, int length)
+			throws IOException {
+		
+		
+		int count = 0;
+		int offset = 0;
+
+		byte[] retData = new byte[length];
+
+		while ((count = is.read(retData, offset, length - offset)) != -1) {
+			offset += count;
+			if (offset == length)
+				break;
+		}
+
+		return retData;
+	}
+	
 	public static void closeConnect(Socket socket, OutputStream os,
 			InputStream is) {
 		try {
