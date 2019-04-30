@@ -167,4 +167,18 @@ public class DateUtil {
 		}
 		return nextDate;
 	}
+	
+	/**
+	 * 获取下几个工作日日期,跳过周末
+	 * @param date
+	 * @param num
+	 * @return
+	 */
+	public static Date getAfterWorkDate(Date date, int num) {
+		Date result = date;
+		for (int i = 0; i < num; i++) {
+			result = getNextWeekDate(result);
+		}
+		return result;
+	}
 }
