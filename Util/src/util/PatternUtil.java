@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 
 public class PatternUtil {
 	public static void main(String[] args) {
-		String noPatternString = getNoPatternString("$");
-		System.out.println(noPatternString);
+		String numberString = getAllNumberString("data56");
+		System.out.println(numberString);
 	}
 	
 	/**
@@ -19,6 +19,22 @@ public class PatternUtil {
 	 */
 	public static String getNumberString(int count, String s){
 		String model = "[0-9]{"+count+"}";
+		Pattern p = Pattern.compile(model);
+		Matcher m = p.matcher(s);
+		if(m.find()){
+			String result = m.group();
+			return result;
+		}
+		return null;
+	}
+	
+	/**
+	 * 匹配对应字符串有没有数字，有则返回第一个连续的数字字符串，无则返回null
+	 * @param s	匹配的字符串
+	 * @return	数字字符串
+	 */
+	public static String getAllNumberString(String s){
+		String model = "[0-9]+";
 		Pattern p = Pattern.compile(model);
 		Matcher m = p.matcher(s);
 		if(m.find()){

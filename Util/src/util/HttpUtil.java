@@ -508,9 +508,9 @@ class HanderTestA implements HttpHandler{
 			System.out.println(temp);
 		}
 		System.out.println("request-end");
-		httpExchange.sendResponseHeaders(200, responseString.length());
+		httpExchange.sendResponseHeaders(200, responseString.getBytes("UTF-8").length);
 		OutputStream os = httpExchange.getResponseBody();
-		os.write(responseString.getBytes());
+		os.write(responseString.getBytes("UTF-8"));
 		os.close();
 		httpExchange.close();
 	}
