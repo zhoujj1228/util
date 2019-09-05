@@ -76,6 +76,29 @@ public class PatternUtil {
 		return result;
 	}
 	
+	
+	/**
+	 * 
+	 * @param sourceStr 被匹配的字符串
+	 * @param pattern 匹配式
+	 * @return 所有匹配到的字符串，包括所有使用()包含的匹配子项
+	 * 返回的结果第一个是匹配的项,第二个才是子项开始
+	 */
+	public static List<List<String>> getPatternList(String sourceStr, String pattern){
+		List<List<String>> result = new ArrayList<List<String>>();
+		Pattern p = Pattern.compile(pattern);// 匹配的模式
+		Matcher matcher = p.matcher(sourceStr);
+		while (matcher.find()) {
+			List<String> temp = new ArrayList<String>();
+			for(int i = 0; i < matcher.groupCount() + 1; i++){
+				String s = matcher.group(i);
+				temp.add(s);
+			}
+			result.add(temp);
+		}
+		return result;
+	}
+	
 	public static String getNoPatternString(String patternStr){
 		String result = Matcher.quoteReplacement(patternStr);
 		return result;

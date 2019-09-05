@@ -1,5 +1,6 @@
 package util;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,5 +171,23 @@ public class StringUtil {
 			sb.append(charArray[i]);
 		}
 		return sb.toString().toUpperCase();
+	}
+	
+	/**
+	 * 获得字段10进制长度头,不够前补零
+	 * 
+	 * @param lenNum  长度位数
+	 * @param strLen  字段长度
+	 * @return
+	 */
+	public static String getStrLengthWithZero(int lenNum, int strLen) {
+
+		String retLen = null;
+		String lenStr = "" + strLen;
+		// 前补0
+		while (lenStr.length() < lenNum) {
+			lenStr = "0" + lenStr;
+		}
+		return retLen;
 	}
 }

@@ -9,27 +9,40 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.QName;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
+import util.domain.XmlDomain;
+
 public class XmlUtil {
 	
 	public static void main(String[] args) {
-		String path = "D:\\Test\\xml\\test1.xml";
-		File file = new File(path);
 		Document document = createDocument();
 		Element createRootElement = createRootElement(document, "Test");
 		createAttribute(createRootElement, "name", "rootName");
-		createElementByName("Test1", createRootElement);
+		Element createElementByName = createElementByName("Test1", createRootElement);
+		createAttribute(createElementByName, "name", "test1name");
 		System.out.println(document.getRootElement().asXML());
-		XmlUtil.createXmlFile(document, file, "UTF-8");
+		//XmlUtil.createXmlFile(document, file, "UTF-8");
+		Attribute object = (Attribute) createRootElement.attributes().get(0);
+		System.out.println(object.getName());
+		System.out.println(object.getText());
+		System.out.println(createElementByName.attributes());
+		XmlDomain xmlDomain = getXmlDomain(createRootElement);
+		System.out.println(xmlDomain.getTagName() + xmlDomain.getAttrMap() + xmlDomain.getSubList().get(0).getAttrMap());
+	
 		
+
+		String path = "D:\\Test\\xml\\test1.xml";
+		File file = new File(path);
+		XmlDomain xmlDomain1 = getXmlDomain(file);
+		System.out.println(xmlDomain1.getTagName() + xmlDomain1.getAttrMap() + xmlDomain1.getSubList().get(0).getAttrMap());
 	}
 	
 	public static Document createDocument(){
@@ -134,6 +147,35 @@ public class XmlUtil {
 			}
 		}
 		return true;
+	}
+	
+	
+	/**
+	 * 获取自定义的数据模型(XmlDomain)
+	 * @param element 传入的节点
+	 * @return XmlDomain
+	 */
+	public static XmlDomain getXmlDomain(Element element) {
+		try {
+			return new XmlDomain(element);
+		} catch (DocumentException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * 获取自定义的数据模型(XmlDomain)
+	 * @param file xml文件
+	 * @return XmlDomain
+	 */
+	public static XmlDomain getXmlDomain(File file) {
+		try {
+			return new XmlDomain(file);
+		} catch (DocumentException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 }

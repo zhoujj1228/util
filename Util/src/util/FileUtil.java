@@ -25,10 +25,8 @@ public class FileUtil {
 
 	@SuppressWarnings("rawtypes")
 	public static void main(String[] args){
-		File file = new File("E:\\±¸·Ý\\");
-		TreeMap<String, TreeMap> fileSubPathMap = getFileSubPath(file, false);
-		String off = "--";
-		itorFilePathMap(fileSubPathMap, off);
+		String path = "D:/Test/CreateDir/" + "com/dc/esb/zjc/baseservice";
+		createDIRbyPath(path);
 	}
 	
 	
@@ -171,7 +169,7 @@ public class FileUtil {
 			StringBuffer sb = new StringBuffer();
 			String s = bd.readLine();
 			while(s != null){
-				sb.append(s);
+				sb.append(s + "\n");
 				s = bd.readLine();
 			}
 			result = sb.toString();
@@ -384,7 +382,7 @@ public class FileUtil {
 	
 	
 	
-	public static String readByFileWithEncoding(File file,String encoding){
+	public static String readByFileWithEncodingNolineBreak(File file,String encoding){
 		String result = null;
 		FileInputStream is =null;
 		BufferedReader bd =null;
@@ -546,6 +544,7 @@ public class FileUtil {
 		if(file.exists()){
 			file.delete();
 		}
+		file.getParentFile().mkdirs();
 		try {
 			file.createNewFile();
 		} catch (IOException e) {

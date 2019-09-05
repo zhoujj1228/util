@@ -2,6 +2,7 @@ package util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +19,7 @@ public class ListUtil {
 		list2.add("3");
 		list2.add("5");
 		list2.add("2");
-		List<String> mergeLists = mergeLists(list1, list2);
+		List<String> mergeLists = intersectLists(list1, list2);
 		System.out.println(mergeLists);
 
 	}
@@ -35,6 +36,12 @@ public class ListUtil {
 		return result.toString();
 	}
 	
+	/**
+	 * 取并集（不重复）
+	 * @param list1
+	 * @param list2
+	 * @return
+	 */
 	public static List mergeLists(List list1, List list2) {
 		Set allSet = new HashSet<>();
 		allSet.addAll(list1);
@@ -42,4 +49,17 @@ public class ListUtil {
 		List list = new ArrayList<>(allSet);
 		return list;
 	}
+	
+	/**
+	 * 取交集
+	 * @param list1
+	 * @param list2
+	 * @return
+	 */
+	public static List intersectLists(List list1, List list2) {
+		List result = new ArrayList<>();
+		result.addAll(list1);
+		result.retainAll(list2);
+		return result;
+    }
 }
