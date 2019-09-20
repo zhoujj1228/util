@@ -666,6 +666,12 @@ public class FileUtil {
 		}
 		return null;
 	}
+	
+	
+	
+	public static void setFileWritable(File file) {
+		file.setWritable(true);
+	}
 }
 
 

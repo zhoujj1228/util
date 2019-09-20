@@ -1,40 +1,108 @@
 import java.io.File;
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Stack;
 
-import util.FileUtil;
-import util.HttpUtil;
-import util.PatternUtil;
-import util.PropertyUtil;
-import util.StringUtil;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class Test {
 
+	public static void main(String[] args) throws Exception {
+
+		File file = new File("D:\\Test\\xml\\UPIDGWL\\ENTITY.XML");
+		new Test().testRetrieve(file);
+	}
+
+	public void testRetrieve(File file) throws Exception {
+		// 创建SAXParser的工厂
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		// 创建SAXParser解析器对象
+		SAXParser parser = factory.newSAXParser();
+		// 获得xml文档的输入流
+		// InputStream is=Test.class.getClassLoader().getResourceAsStream("books.xml");
+		InputStream is = new FileInputStream(file);
+		// 利用Handler对文档进行解析
+		parser.parse(is, new TechDefaultHandler());
+		// 获得文档的读对象
+		XMLReader reader = parser.getXMLReader();
+	}
+}
+
+class TechDefaultHandler extends DefaultHandler {
+	// 使用栈这个数据结构来保存
+	private Stack<String> stack = new Stack<String>();
+
 	/**
-	 * @param args
+	 * 遇到文档开始元素时调用
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		//File file = new File("C:\\eclipseWorkspace\\UnitTest\\src\\reportConfig.properties");
-		//PropertyUtil.initPropertyWithEncoding(file, "UTF-8");
-		//PropertyUtil.initPropertyNoEncoding(file);
-		
-		/*String a = "123aaa67bbb88vvvv9944";
-		List<String> s = PatternUtil.getStringByPattern("[0-9]{2}", a);
-		for(String ss : s){
-			System.out.println(ss);
+	@Override
+	public void startDocument() throws SAXException {
+		System.out.println("startDocument");
+
+	}
+
+	/**
+	 * 遇到文档结束元素时调用
+	 */
+	@Override
+	public void endDocument() throws SAXException {
+		System.out.println("endDocument");
+	}
+
+	/**
+	 * 遇到元素开始元素时调用 获取属性为web的book元素的price元素文本
+	 */
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		// 将标签名压入栈
+		stack.push(qName);
+
+		System.out.println("startElement:" + qName);
+		// 处理属性
+		for (int i = 0; i < attributes.getLength(); ++i) {
+			String attrName = attributes.getQName(i);
+			String attrValue = attributes.getValue(i);
+
+			System.out.println("属性： " + attrName + "=" + attrValue);
+
 		}
-		*/
-		//String responseString = "<SDOROOT package_type=\"xml\"> 	<SYS_HEAD> 		<TRAN_TIMESTAMP>162625284</TRAN_TIMESTAMP> 		<TRAN_DATE>20160302</TRAN_DATE> 		<SERVICE_SCENE>01</SERVICE_SCENE> 		<CONSUMER_ID>030006</CONSUMER_ID> 		<SERVICE_CODE>11002000066</SERVICE_CODE> 		<ORG_SYS_ID>030006    </ORG_SYS_ID> 		<ESB_SEQ_NO>C1-20160308162625-001167</ESB_SEQ_NO> 		<CONSUMER_SEQ_NO>0300062016030200649129</CONSUMER_SEQ_NO> 	</SYS_HEAD> 	<APP_HEAD> 		<USER_ID>E9990   </USER_ID> 		<REVERSAL_DATE></REVERSAL_DATE> 		<AUTH_USER_ID_ARRAY> 			<SDO> 				<AUTH_PASSWORD>                </AUTH_PASSWORD> 				<AUTH_USER_ID>        </AUTH_USER_ID> 			</SDO> 			<SDO> 				<AUTH_PASSWORD>                </AUTH_PASSWORD> 				<AUTH_USER_ID>        </AUTH_USER_ID> 			</SDO> 		</AUTH_USER_ID_ARRAY> 		<REVERSAL_SEQ_NO>00000000</REVERSAL_SEQ_NO> 		<BRANCH_ID>9990      </BRANCH_ID> 		<BIZ_SEQ_NO>00007370</BIZ_SEQ_NO> 	</APP_HEAD> 	<LOCAL_HEAD> 		<RURAL_BRANCH_ID>0000</RURAL_BRANCH_ID> 		<CHANNEL_CODE>000001</CHANNEL_CODE> 		<BUS_SEQ_NO>0300062016030200649129</BUS_SEQ_NO> 	</LOCAL_HEAD> 	<BODY> 		<ACCT_BAL>431.50</ACCT_BAL> 		<TRANS_AMT>6.00</TRANS_AMT> 		<TRANS_TIME>131948</TRANS_TIME> 		<TRANS_DATE>20160307</TRANS_DATE> 		<ACCT_TYPE>1</ACCT_TYPE> 		<DR_CR_FLAG>2</DR_CR_FLAG> 		<ACCT_NO>6231288400001952761</ACCT_NO> 		<REMARK>bbb</REMARK> 	</BODY> </SDOROOT>";
-		//Httptil.createHttpServer(10, responseString, "/test", 8766);
-		/*String s = StringUtil.getStringByFlag(responseString, "package_type", 2, 3);
-		System.out.println(s);*/
-		String s = "sldjfajsdlfjldsjflhttp://123.8.9.11:9098/web/ace1230987654.mp3/56789076\n45shhttp://123.mp3dkfjhksjd";
-		List<String> list = PatternUtil.getStringByPattern("http://.*\\.mp3", s);
-		System.out.println(list.size());
-		for(String result : list){
-			System.out.println(result);
-		}
+
+	}
+
+	/**
+	 * 遇到元素结束元素时调用
+	 */
+	@Override
+	public void endElement(String uri, String localName, String qName) throws SAXException {
+		stack.pop();// 表示该元素解析完毕，需要从栈中弹出标签
+
+		System.out.println("endElement:" + qName);
+	}
+
+	/**
+	 * 遇到文档节点时调用
+	 */
+	@Override
+	public void characters(char[] ch, int start, int length) throws SAXException {
+		// 取出标签名
+		String tagName = stack.peek();
+		String tagStringValue = new String(ch, start, length);
+
+		System.out.println("characters tagName:" + tagName);
+		System.out.println("StringValue:" + tagStringValue);
+
+	}
+
+	@Override
+	public void error(SAXParseException e) throws SAXException {
+		System.out.println(e.getMessage());
 	}
 
 }
