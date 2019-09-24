@@ -18,7 +18,7 @@ public class TCPUtil {
 	public static void main(String[] args) throws UnsupportedEncodingException {
 		//String rsp = "000325ESBH141             00000375178     000015010106030006010106    01010620180412989308000101062018041298930800          0001                      0000    7C5DAB368710098EW9105   17726706IB00412018-02-190000ssssssssssss                                                                    00000001780000250||0.000000|0|0.000000|0|";
 		//createThreadTCPServer(6868, "127.0.0.1", rsp , "", "");
-		String rsp = createSocketClient("127.0.0.1", 8000, "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <Request> <Head> <TxCode>100501</TxCode><TransSerialNumber>3135910010010501012099090900000001</TransSerialNumber> </Head> <Body> <ListSource>200501</ListSource> <DataType>AccountNumber</DataType> <OrganizationID>0000</OrganizationID> <Data>701000108903574</Data> <AccountName>detectName</AccountName> </Body> </Request>", "UTF-8", "UTF-8");
+		String rsp = createSocketClient("127.0.0.1", 6666, "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <Request> <Head> <TxCode>100501</TxCode><TransSerialNumber>3135910010010501012099090900000001</TransSerialNumber> </Head> <Body> <ListSource>200501</ListSource> <DataType>AccountNumber</DataType> <OrganizationID>0000</OrganizationID> <Data>701000108903574</Data> <AccountName>detectName</AccountName> </Body> </Request>", "UTF-8", "UTF-8");
 		System.out.println(rsp);
 	}
 	public static void createTCPServer(int port, String ip, String repTxt,
