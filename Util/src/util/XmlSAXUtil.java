@@ -23,7 +23,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Administrator
  *
  */
-public class XmlSaxUtil {
+public class XmlSAXUtil {
 
 	public static void main(String[] args) throws Exception {
 		boolean isSaveData = true;

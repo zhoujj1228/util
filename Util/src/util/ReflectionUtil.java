@@ -15,11 +15,13 @@ import java.lang.reflect.Method;
  * @date 2018Äê6ÔÂ27ÈÕ
  */
 public class ReflectionUtil {
-	String str = "1";
 	
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException {
-		System.out.println();
+		
 	}
+	
+	
+	
 	
 	//test
 	public static void test(String[] args) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException {

@@ -15,9 +15,12 @@ import org.xml.sax.helpers.DefaultHandler;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
-
-		File file = new File("D:\\Test\\xml\\UPIDGWL\\ENTITY.XML");
-		new Test().testRetrieve(file);
+		String s = "#MXSD_r:2#esbsplit#MXSD_q:C1#esbsplit#MXSD_REPLY_TAG:true#esbsplit#MXSD_n:1511265540859#esbsplit#MXSD_m:1511265540858#esbsplit#MXSD_l:1511265540743#esbsplit#MXSD_k:1511265540740#esbsplit#MXSD_j";
+		String[] split = s.split("#esbsplit#");
+		for (int i = 0; i < split.length; i++) {
+			System.out.println(split[i]);
+		}
+		
 	}
 
 	public void testRetrieve(File file) throws Exception {

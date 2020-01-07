@@ -137,7 +137,6 @@ public class FileUtil {
 				in = input.read();
 			}
 		} catch (Exception e) {
-			
 			e.printStackTrace();
 			return false;
 		} finally{
@@ -157,6 +156,35 @@ public class FileUtil {
 			}
 		}
 		return true;
+	}
+	
+	public static boolean copyFileIsNoExist(File fromFile, File toFile){
+		if(toFile.exists()) {
+			return true;
+		}
+		
+		return copyFile(fromFile, toFile);
+	}
+	
+	public static boolean copyFileAndCreate(File fromFile, File toFile){
+		if(toFile.exists()) {
+			toFile.getParentFile().mkdirs();
+			try {
+				toFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		return copyFile(fromFile, toFile);
+	}
+	
+	public static boolean copyFileToDir(File fromFile, File dirFile){
+		dirFile.mkdirs();
+		String targetFilePath = dirFile.getPath() + "/" + fromFile.getName();
+		
+		return copyFileAndCreate(fromFile, new File(targetFilePath));
 	}
 	
 	public static String readByFile(File file){
@@ -670,6 +698,11 @@ public class FileUtil {
 	
 	
 	public static void setFileWritable(File file) {
+		file.setWritable(true);
+	}
+	
+	
+	public static void changeFileWritable(File file) {
 		file.setWritable(true);
 	}
 }

@@ -764,4 +764,78 @@ public class Excel07Util {
 	public void copySheetToExcel(File source, String sheetName, File target) {
 		
 	}
+	
+	public static boolean writeNewExcelByListAndFlag(File file, List<String> lists, String flag, String sheetName) {
+		OutputStream os;
+		Workbook writewb = null;
+		try {
+			if (!file.exists()) {
+				file.createNewFile();
+				writewb = new XSSFWorkbook();
+			}else {
+				writewb = getWriteExcel(file.getAbsolutePath());
+			}
+			Sheet sheet = writewb.createSheet(sheetName);
+			for (int rowIdx = 0; rowIdx < lists.size(); rowIdx++) {
+				Row row = sheet.createRow(rowIdx);
+				String list = lists.get(rowIdx);
+				String[] cellList = list.split(flag);
+				for (int cellIdx = 0; cellIdx < cellList.length; cellIdx++) {
+					Cell cell = row.createCell(cellIdx);
+					String value = cellList[cellIdx];
+					cell.setCellValue(value);
+				}
+			}
+			os = new FileOutputStream(file);
+			writewb.write(os);
+			os.close();
+			writewb.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static void writeExcelBySheetNameAndListToLastRow(File file, List<String> list,
+			String sheetName, boolean copyLastRowStyle) {
+		Workbook writeExcel = getWriteExcel(file.getPath());
+		Sheet sheet = writeExcel.getSheet(sheetName);
+		int lastRowIndex = sheet.getPhysicalNumberOfRows();
+		Row createRow = createRow(sheet, lastRowIndex);
+		for (int i = 0; i < list.size(); i++) {
+			String cellValue = list.get(i);
+			Cell createCell = createRow.createCell(i);
+			createCell.setCellValue(cellValue);
+			if(copyLastRowStyle) {
+				Cell lastCell = sheet.getRow(lastRowIndex-1).getCell(i);
+				cloneStyle(createCell, lastCell, writeExcel);
+			}
+		}
+		
+		writeExcelToFile(file.getPath(), writeExcel);
+	}
+	
+	public static void cloneStyle(Cell cell, Cell cloneCell, Workbook workbook) {
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.cloneStyleFrom(cloneCell.getCellStyle());
+		cell.setCellStyle(cellStyle);
+		
+	}
+	
+	/**
+	 * 如果行已存在则在该行前插入一行，否则新建一行
+	 * @param sheet
+	 * @param rowIndex
+	 * @return
+	 */
+	public static Row createRow(Sheet sheet, int rowIndex) {
+		Row row = null;
+		if (sheet.getRow(rowIndex) != null) {
+			int lastRowNo = sheet.getLastRowNum();
+			sheet.shiftRows(rowIndex, lastRowNo, 1);
+		}
+		row = sheet.createRow(rowIndex);
+		return row;
+	}
 }

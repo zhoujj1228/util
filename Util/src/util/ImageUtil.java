@@ -8,14 +8,45 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 
 public class ImageUtil {
-
+	public static void main(String[] args) {
+		System.out.println(changeHexToInt("A000"));
+		System.out.println(changeIntToHex(170));
+	}
+	
+	public static BufferedImage getBufferedImage(File imageFile) {
+		BufferedImage bi = null;
+		try {
+			bi = ImageIO.read(imageFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return bi;
+	}
+	
+	/**
+	 * 
+	 * @param fileSuffix 文件后缀，如：png
+	 * @param outputFile
+	 * @param bi
+	 * @return
+	 */
+	public static File writeBufferedImageToFile(String fileSuffix, File outputFile, BufferedImage bi) {
+		try {
+			ImageIO.write(bi, fileSuffix, outputFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return outputFile;
+	}
 	
 	/**
 	 * 去除白边
@@ -141,6 +172,47 @@ public class ImageUtil {
 	}
 	
 	/**
+	 * 获取图片的rgb信息像素矩阵
+	 * @param imagePath 图片路径
+	 * @return 包含rgb信息的二维数组，每个元素以'r,g,b'这样的形式保存
+	 */
+	public static String[][] getPX(String imagePath) {
+		File file = new File(imagePath);
+		BufferedImage bi = null;
+		try {
+			bi = ImageIO.read(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String[][] rgbPixArray = getPX(bi);
+		return rgbPixArray;
+	}
+	
+	/**
+	 * 将图像转为二维像素矩阵
+	 * @param bi
+	 * @return 包含rgb信息的二维数组，每个元素以'r,g,b'这样的形式保存
+	 */
+	public static String[][] getPX(BufferedImage bi) {
+		int[] rgb = new int[3];
+		int width = bi.getWidth();
+		int height = bi.getHeight();
+		int minx = bi.getMinX();
+		int miny = bi.getMinY();
+		String[][] rgbPixArray = new String[width][height];
+		for (int i = minx; i < width; i++) {
+			for (int j = miny; j < height; j++) {
+				int pixel = bi.getRGB(i, j);
+				rgb[0] = (pixel & 0xff0000) >> 16;
+				rgb[1] = (pixel & 0xff00) >> 8;
+				rgb[2] = (pixel & 0xff);
+				rgbPixArray[i][j] = rgb[0] + "," + rgb[1] + "," + rgb[2];
+			}
+		}
+		return rgbPixArray;
+	}
+	
+	/**
 	 * 将二维像素矩阵转为图像
 	 * @param pixMatrix
 	 * @param targetFile
@@ -152,19 +224,9 @@ public class ImageUtil {
 		BufferedImage bi = new BufferedImage(pixMatrix.length, pixMatrix[0].length, BufferedImage.TYPE_INT_RGB);
 		int srcWidth = bi.getWidth();
 		int srcHeight = bi.getHeight();
-		for (int i = 0; i < srcWidth; i++) {
+		for (int i = 0; i < srcWidth; i++) { 	
 			for (int j = 0; j < srcHeight; j++) {
-				/*if(pixMatrix[i][j] > -5777216 && pixMatrix[i][j] < -10){
-					bi.setRGB(i, j, -1);
-					continue;
-				}*/
 				bi.setRGB(i, j, pixMatrix[i][j]);
-				/*if(pixMatrix[i][j] != -1){
-					System.out.print("*" + " ");
-				}else{
-					System.out.print(" " + " ");
-				}*/
-				//System.out.println(pixMatrix[i][j]);
 			}
 			
 		}
@@ -298,4 +360,135 @@ public class ImageUtil {
 		
 		ImageIO.write(bi, formatName, output);
 	}
+	
+	public static int getRed(int rgb) {
+		int red = (rgb >> 16) & 255;
+		return red;
+	}
+	
+	public static int getGreen(int rgb) {
+		int green = (rgb >> 8) & 255;
+		return green;
+	}
+	
+	public static int getBlue(int rgb) {
+		int blue = (rgb) & 255;
+		return blue;
+	}
+	
+	/**
+	 * 将16进制转十进制，例如num为0000AA，则返回结果为170 = 16*10 + 10
+	 * @param num 十六进制数
+	 * @return
+	 */
+	public static int changeHexToInt(String num) {
+		int intNum = Integer.parseInt(num, 16);
+		return intNum;
+	}
+	
+	public static String changeIntToHex(int num) {
+		StringBuffer s = new StringBuffer();
+		String hexNum;
+		char[] b = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		while (num != 0) {
+			s = s.append(b[num % 16]);
+			num = num / 16;
+		}
+		hexNum = s.reverse().toString();
+		return hexNum;
+	}
+	
+	public static int[][] changePixFormat(String[][] pixArray) {
+		int[][] result = new int[pixArray.length][pixArray[0].length];
+		for (int i = 0; i < pixArray.length; i++) {
+			for (int j = 0; j < pixArray[i].length; j++) {
+				String rgbStr = pixArray[i][j];
+				int[] rgbIntArray = getRGBIntArray(rgbStr);
+				//int rgb = (1 << 17) + (rgbIntArray[0] << 16) + (rgbIntArray[0] << 8) + (rgbIntArray[0]);
+				result[i][j] = getRGB(rgbIntArray[0], rgbIntArray[1], rgbIntArray[2]);
+			}
+			
+		}
+		return result;
+	}
+	
+	
+	public static int getRGB(int r, int g, int b) {
+		Color color = new Color(r, g, b);
+		int rgb = color.getRGB();
+		return rgb;
+	}
+
+	
+	/**
+	 * 对比两个像素矩阵，要求两个矩阵长度一致，
+	 * @param array1
+	 * @param array2
+	 * @return 相似程度，最高为1
+	 */
+	public static double compareTwoPXArray(String[][] array1, String[][] array2) {
+		int xiangsi = 0;
+		int busi = 0;
+		for (int i = 0; i < array1.length; i++) {
+			
+			for (int j = 0; j < array1[i].length; j++) {
+				try {
+					String[] value1 = array1[i][j].toString().split(",");
+					String[] value2 = array2[i][j].toString().split(",");
+					for (int k = 0; k < value1.length; k++) {
+						if (Math.abs(Integer.parseInt(value1[k]) - Integer.parseInt(value2[k])) < 15) {
+							xiangsi++;
+						} else {
+							busi++;
+						}
+					}
+				} catch (RuntimeException e) {
+					//越界直接不对比
+					continue;
+				}
+			}
+		}
+		
+		double baifen = 0;
+
+		try {
+			baifen = (double)xiangsi / (double)(busi + xiangsi);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+//		System.out.println("相似像素数量：" + xiangsi + " 不相似像素数量：" + busi + " 相似率：" + (int)(baifen * 100) + "%");
+//		System.out.println("baifen=" + baifen);
+		return baifen;
+	}
+	
+
+	/**
+	 * 比较两张图片是否相同，要求图片大小一致
+	 * @param imagePath1
+	 * @param imagePath2
+	 */
+	public static void compareImage(String imagePath1, String imagePath2) {
+		String[] images = { imagePath1, imagePath2 };
+		if (images.length == 0) {
+			System.out.println("Usage >java BMPLoader ImageFile.bmp");
+			System.exit(0);
+		}
+		// 分析图片相似度 begin
+		String[][] list1 = getPX(images[0]);
+		String[][] list2 = getPX(images[1]);
+		
+		compareTwoPXArray(list1, list2);
+	}
+	
+
+	public static int[] getRGBIntArray(String pxRgbStr) {
+		String[] rgbArray = pxRgbStr.split(",");
+		int[] result = new int[rgbArray.length];
+		for (int i = 0; i < rgbArray.length; i++) {
+			int parseInt = Integer.parseInt(rgbArray[i]);
+			result[i] = parseInt;
+		}
+		return result;
+	}
+	
 }
