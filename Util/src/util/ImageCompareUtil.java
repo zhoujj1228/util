@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -12,12 +13,24 @@ import util.RobotUtil;
 
 public class ImageCompareUtil {
 
-	public static void main(String[] args) throws IOException {
-		String partImagePath = "D:\\Test\\20190102\\11.png";
-		RobotUtil ru = new RobotUtil();
-		BufferedImage screenshotFullBi = ru.screenshotFull();
-		BufferedImage partBufferedImage = ImageUtil.getBufferedImage(new File(partImagePath));
-		new ImageCompareUtil().findPartImagePosInScreen(screenshotFullBi, partBufferedImage, 9);
+	public static void main(String[] args) throws IOException, InterruptedException {
+		
+		Thread.currentThread().sleep(3000);
+		List<String> imagePaths = new ArrayList<String>();
+		imagePaths.add("D:\\Test\\20200213\\1.png");
+		findImagesAndMouseLeftClick(imagePaths);
+		
+	}
+	
+	
+	public static void findImagesAndMouseLeftClick(List<String> imagePaths) throws IOException {
+		for (String partImagePath : imagePaths) {
+			RobotUtil ru = new RobotUtil();
+			BufferedImage screenshotFullBi = ru.screenshotFull();
+			BufferedImage partBufferedImage = ImageUtil.getBufferedImage(new File(partImagePath));
+			int[] xy = findPartImagePosInScreen(screenshotFullBi, partBufferedImage, 9);
+			ru.mouseLeftClick(xy[0], xy[1]);
+		}
 	}
 	
 	/**
@@ -124,10 +137,10 @@ public class ImageCompareUtil {
 
 				int sumDiff = getTwoPxArrayRGBSumDiff(partPx[x][y], partPx[x+1][y]);
 				if(sumDiff > flag) {
-					/*System.out.println("getLeftTopFlag:" + x);
+					System.out.println("getLeftTopFlag:" + x);
 					System.out.println("getLeftTopFlag:" + y);
 					System.out.println("getLeftTopFlag:" + partPx[x][y]);
-					System.out.println("getLeftTopFlag:" + partPx[x+1][y]);*/
+					System.out.println("getLeftTopFlag:" + partPx[x+1][y]);
 					result[0] = x;
 					result[1] = y;
 					break loop;
@@ -144,10 +157,10 @@ public class ImageCompareUtil {
 				
 				int sumDiff = getTwoPxArrayRGBSumDiff(partPx[x][y], partPx[x+1][y]);
 				if(sumDiff > flag) {
-					/*System.out.println("getLeftDownFlag:" + x);
+					System.out.println("getLeftDownFlag:" + x);
 					System.out.println("getLeftDownFlag:" + y);
 					System.out.println("getLeftDownFlag:" + partPx[x][y]);
-					System.out.println("getLeftDownFlag:" + partPx[x+1][y]);*/
+					System.out.println("getLeftDownFlag:" + partPx[x+1][y]);
 					result[0] = x;
 					result[1] = y;
 					break loop;

@@ -705,6 +705,18 @@ public class FileUtil {
 	public static void changeFileWritable(File file) {
 		file.setWritable(true);
 	}
+	
+	public static String getFlagLine(String data, String string) {
+		String result = null;
+		String[] split = data.split("\n");
+		for (int i = 0; i < data.length(); i++) {
+			String temp = split[i];
+			if (temp.contains("valItemInfo")) {
+				result = temp;
+			}
+		}
+		return result;
+	}
 }
 
 

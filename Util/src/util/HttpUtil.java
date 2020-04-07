@@ -35,27 +35,13 @@ import com.sun.net.httpserver.HttpServer;
 public class HttpUtil {
 	
 	public static void main(String[] args) throws InterruptedException{
-		String url = "http://home.dcits.com/dcie/releaseItem/show/44";
-		String fileName = url.substring(7, url.length()).replaceAll("/", "++") + ".html";
-		String result = callHttpParamGet(url, null, null, "UTF-8");
-		File file = FileUtil.createFileDeleteSource("D:/Test/esb/project/" + fileName);
-		FileUtil.writeByFileWithEncoding(result, file, "UTF-8");
-		List<List<String>> patternList = PatternUtil.getPatternList(result, "href=\"(.*?)\"", 1);
-		
-		//System.out.println(patternList);
-		for(List<String> list : patternList){
-			Thread.currentThread().sleep(1000);
-			url = list.get(1);
-			System.out.println(url);
-			fileName = url.substring(7, url.length()).replaceAll("/", "++");
-			result = callHttpParamGet(url, null, null, "UTF-8");
-			file = FileUtil.createFileDeleteSource("D:/Test/esb/project/" + fileName);
-			FileUtil.writeByFileWithEncoding(result, file, "UTF-8");
-		}
+		String url = "https://rsshub.app/telegram/channel/jdkzjk";
+		String result = callHttpParamGet(url, null, null, "UTF-8", null);
+		System.out.println(result);
 	}
 	
 	
-	public static String callHttpParamPost(String url, HashMap<String,String> paramMap, String data, String encode){
+	public static String callHttpParamPost(String url, HashMap<String,String> paramMap, String data, String encode, HashMap<String, String> headerMap){
 		StringBuffer sb = new StringBuffer();
 		String paramString = null;
 		if(paramMap != null){
@@ -86,9 +72,19 @@ public class HttpUtil {
 			//urls = new URL("http://11.8.129.121:8081/esbconsole");
 			//打开连接
 			url_con = (HttpURLConnection) urls.openConnection();
-			//设置通用的请求属性
-			url_con.setRequestProperty("accept", "*/*");
-			url_con.setRequestProperty("connection", "Keep-Alive");
+			
+			if(headerMap == null) {
+				//设置通用的请求属性
+				url_con.setRequestProperty("accept", "*/*");
+				url_con.setRequestProperty("connection", "Keep-Alive");
+			}else {
+				for(String key : headerMap.keySet()) {
+					String value = headerMap.get(key);
+					url_con.setRequestProperty(key, value);
+				}
+			}
+			
+			
 			url_con.setRequestMethod("POST");
 			//post请求必须这两行
 			url_con.setDoOutput(true);
@@ -117,7 +113,7 @@ public class HttpUtil {
 					s = br.readLine();
 				}
 				result = sbRsp.toString();
-				System.out.println(result);
+//				System.out.println(result);
 				br.close();
 				isr.close();
 				in.close();
@@ -138,7 +134,7 @@ public class HttpUtil {
 			}
 			if(isr != null){
 				try {
-					br.close();
+					isr.close();
 				} catch (IOException e) {
 					
 					e.printStackTrace();
@@ -146,7 +142,7 @@ public class HttpUtil {
 			}
 			if(in != null){
 				try {
-					br.close();
+					in.close();
 				} catch (IOException e) {
 					
 					e.printStackTrace();
@@ -157,7 +153,7 @@ public class HttpUtil {
 		
 	}
 	
-	public static String callHttpParamGet(String url, HashMap<String,String> paramMap, String data, String encode){
+	public static String callHttpParamGet(String url, HashMap<String,String> paramMap, String data, String encode, HashMap<String,String> headerMap){
 		StringBuffer sb = new StringBuffer();
 		String paramString = null;
 		if(paramMap != null){
@@ -188,10 +184,21 @@ public class HttpUtil {
 			//urls = new URL("http://11.8.129.121:8081/esbconsole");
 			//打开连接
 			url_con = (HttpURLConnection) urls.openConnection();
+			
+			if(headerMap == null) {
+				url_con.setRequestProperty("accept", "*/*");
+				url_con.setRequestProperty("connection", "Keep-Alive");
+			}else {
+				for(String key : headerMap.keySet()) {
+					String value = headerMap.get(key);
+					url_con.setRequestProperty(key, value);
+				}
+			}
+			
 			//设置通用的请求属性
-			url_con.setRequestProperty("accept", "*/*");
-			url_con.setRequestProperty("connection", "Keep-Alive");
-			url_con.setRequestProperty("Cookie", "Hm_lvt_428625cbc2b4a0c40698357ed55cdba9=1522650616; Hm_lvt_1ebcfb94d6c4595ccc209b35019cd05d=1529032835; _pk_id.3.ec3a=27f0bdf36521d25b.1518059675.2.1522651850.1518059719.; Hm_lvt_e723284c7c986858e4979c37cfecef34=1530170143; PD-H-SESSION-ID=4_lynrb8uFU7tGA9JEo1tNo3RHsxiHMRG+PufzpiXJO8F9e7NW; SESSION_COOKIE=c_webseal_31; AMWEBJCT!%2Fitsweb!JSESSIONID=1E55D3325BA7D0842C46EA81396A43D7; IV_JCT=%2Fdcie; AMWEBJCT!%2Fdcie!JSESSIONID=05BECA3C8E97E2AC02188C08DEE9C4ED; PD-ID=nIHTOpTOFg39NQsDA2IWPPPjRslFYwFHFHMlkA9NRrYwfQcxrwkQXrUuNaNh4yRwpfUNjJmL7CXEjiUcB/IK0A9PdqtgO24ymDjo7bDPSnHPY7F1p/y/X0PPdghVg4zbXfl1Ty5RGZl34C5bDMMBO0wrrDqVAHQeWH1CyOQbc4uc2D+m9c0Bwkvzr4LwMNoiQyuDye1+Oo8T+8jo5l/jZE6QV3qm7V74eGQtiijE1f8Op6YYmWCxLkiE/fV3Q/VgdxUZ+SVnFWM=; PD-ECC=BAGs3DB0AgEBAgIBmgIBAAIBAAQABGMEAazcMF0CAQECBFs9qQIEGWhvbWUuaXRzcG9ydGFsLmRjaXRzLmNvbQAEBmRjaXRzAAQOL3BrbXN2b3VjaGZvcgAwHwIBATAaMBgCAQEEDHBkLWVjYy1odHRwADAFBAM4MAA=!.dcits.com");
+			//url_con.setRequestProperty("accept", "*/*");
+			//url_con.setRequestProperty("connection", "Keep-Alive");
+			//url_con.setRequestProperty("Cookie", "Hm_lvt_428625cbc2b4a0c40698357ed55cdba9=1522650616; Hm_lvt_1ebcfb94d6c4595ccc209b35019cd05d=1529032835; _pk_id.3.ec3a=27f0bdf36521d25b.1518059675.2.1522651850.1518059719.; Hm_lvt_e723284c7c986858e4979c37cfecef34=1530170143; PD-H-SESSION-ID=4_lynrb8uFU7tGA9JEo1tNo3RHsxiHMRG+PufzpiXJO8F9e7NW; SESSION_COOKIE=c_webseal_31; AMWEBJCT!%2Fitsweb!JSESSIONID=1E55D3325BA7D0842C46EA81396A43D7; IV_JCT=%2Fdcie; AMWEBJCT!%2Fdcie!JSESSIONID=05BECA3C8E97E2AC02188C08DEE9C4ED; PD-ID=nIHTOpTOFg39NQsDA2IWPPPjRslFYwFHFHMlkA9NRrYwfQcxrwkQXrUuNaNh4yRwpfUNjJmL7CXEjiUcB/IK0A9PdqtgO24ymDjo7bDPSnHPY7F1p/y/X0PPdghVg4zbXfl1Ty5RGZl34C5bDMMBO0wrrDqVAHQeWH1CyOQbc4uc2D+m9c0Bwkvzr4LwMNoiQyuDye1+Oo8T+8jo5l/jZE6QV3qm7V74eGQtiijE1f8Op6YYmWCxLkiE/fV3Q/VgdxUZ+SVnFWM=; PD-ECC=BAGs3DB0AgEBAgIBmgIBAAIBAAQABGMEAazcMF0CAQECBFs9qQIEGWhvbWUuaXRzcG9ydGFsLmRjaXRzLmNvbQAEBmRjaXRzAAQOL3BrbXN2b3VjaGZvcgAwHwIBATAaMBgCAQEEDHBkLWVjYy1odHRwADAFBAM4MAA=!.dcits.com");
 			url_con.setRequestMethod("GET");
 			url_con.setInstanceFollowRedirects(false); 
 			//post请求必须这两行
@@ -246,7 +253,7 @@ public class HttpUtil {
 			}
 			if(isr != null){
 				try {
-					br.close();
+					isr.close();
 				} catch (IOException e) {
 					
 					e.printStackTrace();
@@ -254,7 +261,7 @@ public class HttpUtil {
 			}
 			if(in != null){
 				try {
-					br.close();
+					in.close();
 				} catch (IOException e) {
 					
 					e.printStackTrace();

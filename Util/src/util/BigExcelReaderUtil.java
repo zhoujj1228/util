@@ -168,7 +168,12 @@ public class BigExcelReaderUtil {
 	}
 	
 	private static XMLReader fetchSheetParser(SharedStringsTable sst) throws SAXException {
-		XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+		//1.5前使用这个，还需要导入对应的包xerces
+		//XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+		
+		//1.5后使用这个，已经内置在jdk
+		XMLReader parser = XMLReaderFactory.createXMLReader("com.sun.org.apache.xerces.internal.parsers.SAXParser");
+		
 		ContentHandler handler = new SheetHandler(sst);
 		parser.setContentHandler(handler);
 		
@@ -220,7 +225,12 @@ public class BigExcelReaderUtil {
 
 	
 	private static XMLReader fetchSheetParserToMap(SharedStringsTable sst) throws SAXException {
-		XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+		//1.5前使用这个，还需要导入对应的包xerces
+		//XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+				
+		//1.5后使用这个，已经内置在jdk
+		XMLReader parser = XMLReaderFactory.createXMLReader("com.sun.org.apache.xerces.internal.parsers.SAXParser");
+				
 		ContentHandler handler = new MapSheetHandler(sst);
 		parser.setContentHandler(handler);
 		

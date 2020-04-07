@@ -32,5 +32,18 @@ public class IOUtil {
         }
         return result;
     }
+    
+    
+    public static byte[] readInputStreamToBytes(InputStream in) throws IOException {
+    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		int len = 1024;
+		byte[] buffer = new byte[1024];
+		int readlen = 0;
+		while((readlen = in.read(buffer, 0, len)) > 0){
+			bos.write(buffer, 0, readlen);
+		}
+		byte[] bytes = bos.toByteArray();
+		return bytes;
+    }
 
 }

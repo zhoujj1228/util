@@ -26,22 +26,18 @@ import com.sun.net.httpserver.HttpHandler;
 import util.HttpUtil;
 import util.ImageCompareUtil;
 
-public class HttpClientTest{
+public class HttpClientTest2{
 	private static List<String> imagePaths;
 	public static void main(String[] args) throws Exception {
 		init();
-		try {
-			call();
-		} catch (Exception e) {
-			e.printStackTrace();
-			ImageCompareUtil.findImagesAndMouseLeftClick(imagePaths);
-		}
-//		call2();
+		call();
+//		String reqStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <SDOROOT>   <SYS_HEAD><CONSUMER_SEQ_NO>030009204009110000001</CONSUMER_SEQ_NO>     <TRAN_TIMESTAMP>091253091</TRAN_TIMESTAMP>          <USER_LANG>CHINESE</USER_LANG>     <SERVICE_SCENE>01</SERVICE_SCENE>     <SERVICE_CODE>11002000081</SERVICE_CODE>     <CONSUMER_ID>010106</CONSUMER_ID>     <TRAN_DATE>20400911</TRAN_DATE>     <ORG_SYS_ID>8888888888</ORG_SYS_ID>   </SYS_HEAD>   <APP_HEAD>     <BIZ_SEQ_NO>59431056</BIZ_SEQ_NO>     <USER_ID>X0300</USER_ID>     <BRANCH_ID>0300</BRANCH_ID>   </APP_HEAD>   <LOCAL_HEAD>     <RURAL_BRANCH_ID>0000</RURAL_BRANCH_ID>     <CHANNEL_CODE>000001</CHANNEL_CODE>     <BUS_SEQ_NO>0300092040091159000001</BUS_SEQ_NO>   </LOCAL_HEAD>   <BODY>     <EXT_BUS_CODE>1120080</EXT_BUS_CODE>   </BODY> </SDOROOT>";
+//		HttpUtil.callHttpXml("http://11.8.129.120:30056/eone", reqStr);
+		//HttpUtil.callHttpXml("http://11.13.2.66:8081/ectip/httpaccess", reqStr);
 		
 		
 	}
 	
-
 	private static void init() {
 		imagePaths = new ArrayList<String>();
 		imagePaths.add("D:\\Test\\20200213\\1.png");
@@ -50,23 +46,23 @@ public class HttpClientTest{
 	private static void call() throws IOException {
 		int i = 0;
 		while(true) {
+			try {
+				Thread.currentThread().sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				break;
+			}
 			String rsp = callHttpParamGet("https://list.tmall.com/search_product.htm?q=%D5%F1%B5%C2+%BF%DA%D5%D6", null, null, "GBK");
 			i++;
 			System.out.println("检查"+i);
-//			System.out.println(rsp);
 			if(!rsp.contains("口罩")) {
 				System.out.println("!html.contains(\"口罩\")");
 				System.exit(0);
 			}
+			//System.out.println(rsp);
 			if(rsp.contains("ZD振德旗舰店")) {
 				System.out.println("获取到口罩信息更新");
 				ImageCompareUtil.findImagesAndMouseLeftClick(imagePaths);
-				break;
-			}
-			try {
-				Thread.currentThread().sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 				break;
 			}
 		}		
@@ -145,130 +141,6 @@ public class HttpClientTest{
 				byte[] bytes = bos.toByteArray();
 				byte[] uncompress = uncompress(bytes);
 				result = new String(uncompress, "GBK");
-				
-				/*isr = new InputStreamReader(in, encode);
-				br = new BufferedReader(isr);
-				String s = br.readLine();
-				StringBuffer sbRsp = new StringBuffer();
-				while(s != null){
-					sbRsp.append(s);
-					s = br.readLine();
-				}
-				result = sbRsp.toString();*/
-				//System.out.println(result);
-				//System.out.println(url_con.getHeaderFields());
-			}
-			else{
-				if(code == 302){
-					System.out.println();
-				}
-				System.out.println("errCode="+code);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally{
-			if(br != null){
-				try {
-					br.close();
-				} catch (IOException e) {
-					
-					e.printStackTrace();
-				}
-			}
-			if(isr != null){
-				try {
-					isr.close();
-				} catch (IOException e) {
-					
-					e.printStackTrace();
-				}
-			}
-			if(in != null){
-				try {
-					in.close();
-				} catch (IOException e) {
-					
-					e.printStackTrace();
-				}
-			}
-		}
-		return result;
-		
-	}
-	
-	public static String callHttpParamGet2(String url, HashMap<String,String> paramMap, String data, String encode){
-		StringBuffer sb = new StringBuffer();
-		String paramString = null;
-		if(paramMap != null){
-			Iterator<Entry<String, String>> it = paramMap.entrySet().iterator();
-			while(it.hasNext()){
-				Entry<String, String> entry = it.next();
-				String key = entry.getKey();
-				String value = entry.getValue();
-				sb.append(key+"="+value+"&");
-			}
-			paramString = sb.substring(0, sb.length()-1);
-		}
-		
-		URL urls = null;
-		HttpURLConnection url_con = null;
-		PrintWriter out = null;
-		String result = null;
-		InputStream in = null;
-		InputStreamReader isr = null;
-		BufferedReader br = null;
-		//格式如http://11.8.128.140:8765/test?username=123&age=12
-		try {
-			if(paramString != null){
-				urls = new URL(url+"?"+paramString);
-			}else{
-				urls = new URL(url);
-			}
-			//urls = new URL("http://11.8.129.121:8081/esbconsole");
-			//打开连接
-			url_con = (HttpURLConnection) urls.openConnection();
-			//设置通用的请求属性
-			url_con.setRequestProperty("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-			url_con.setRequestProperty("Accept-Encoding", "gzip, deflate");
-			url_con.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9");
-			url_con.setRequestProperty("Cache-Control", "max-age=0");
-			url_con.setRequestProperty("connection", "keep-alive");
-			url_con.setRequestProperty("Cookie", "__cfduid=d47f67b7a1ec61b5c64f5cd5daa413ac31581587367");
-			url_con.setRequestProperty("Host", "list.tmall.com");
-			url_con.setRequestProperty("Upgrade-Insecure-Requests", "1");
-			url_con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36");
-			url_con.setRequestMethod("GET");
-			url_con.setInstanceFollowRedirects(false); 
-			//post请求必须这两行
-			/*url_con.setDoOutput(true);
-			url_con.setDoInput(true);*/
-			//发送参数
-			if(data != null){
-				out = new PrintWriter(url_con.getOutputStream());
-				out.print(data);
-				out.flush();
-			}else{
-				url_con.connect();
-			}
-			
-			//打开真实连接,如果尚未打开，因为已经建立output所以不用打开连接了
-			//url_con.connect();
-			
-			int code = url_con.getResponseCode();
-			if(code == HttpURLConnection.HTTP_OK){
-				in = url_con.getInputStream();
-				
-				
-				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				int len = 1024;
-				byte[] buffer = new byte[1024];
-				int readlen = 0;
-				while((readlen = in.read(buffer, 0, len)) > 0){
-					bos.write(buffer, 0, readlen);
-				}
-				byte[] bytes = bos.toByteArray();
-				byte[] uncompress = uncompress(bytes);
-				result = new String(uncompress, encode);
 				
 				/*isr = new InputStreamReader(in, encode);
 				br = new BufferedReader(isr);
