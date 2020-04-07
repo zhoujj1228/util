@@ -42,25 +42,17 @@ public class BigExcelReaderUtil {
 		indexList.add("4");
 		BigExcelReaderUtil.processAllSheetsToMapByIdxList(filePath,indexList);
 		//HashMap<String, HashMap<String, String>> colRowMap = BigExcelReaderUtil.colRowMap;
-		System.out.println();
-		System.out.println("--------------------");
 		for(String index : indexList){
 			HashMap<String, HashMap<String, String>> rowColMap = indexRowColMap.get(index);
 			Set<String> rowSet = rowColMap.keySet();
 			List<String> rowList = new ArrayList<String>(rowSet);
 			Collections.sort(rowList, new StringNumComparator(true));
 			for(String row : rowList){
-				System.out.print(row);
 				HashMap<String, String> colMap = rowColMap.get(row);
 				Set<String> colSet = colMap.keySet();
 				List<String> colList = new ArrayList<String>(colSet);
 				Collections.sort(colList);
-				for(String col : colList){
-					System.out.print(col + "\t|" + colMap.get(col) + "|\t");
-				}
-				System.out.println();
 			}
-			System.out.println("--------------------");
 		}
 		
 		//BigExcelReaderUtil.processAllSheets(filePath);
@@ -96,12 +88,10 @@ public class BigExcelReaderUtil {
 		XMLReader parser = fetchSheetParser(sst);
 		Iterator<InputStream> sheets = reader.getSheetsData();
 		while(sheets.hasNext()){
-			System.out.println("processing new sheet:\n");
 			InputStream sheet = sheets.next();
 			InputSource sheetSource = new InputSource(sheet);
 			parser.parse(sheetSource);
 			sheet.close();
-			System.out.println("");
 		}
 	}
 	
@@ -133,12 +123,10 @@ public class BigExcelReaderUtil {
 			rowColMap = new HashMap<String, HashMap<String, String>>();
 			colRowMap = new HashMap<String, HashMap<String, String>>();
 			
-			System.out.println("processing new sheet:\n");
 			InputStream sheet = sheets.next();
 			InputSource sheetSource = new InputSource(sheet);
 			parser.parse(sheetSource);
 			sheet.close();
-			System.out.println("");
 			
 			indexColRowMap.put(index+"", colRowMap);
 			indexRowColMap.put(index+"", rowColMap);
@@ -194,7 +182,6 @@ public class BigExcelReaderUtil {
 		 */
 		public void startElement(String uri, String localName, String name, Attributes attrs){
 			if(name.equals("c")){
-				System.out.print(attrs.getValue("r") + " - ");
 				String cellType = attrs.getValue("t");
 				if(cellType != null && cellType.equals("s")){
 					nextIsString = true;
@@ -210,10 +197,6 @@ public class BigExcelReaderUtil {
 				int idx = Integer.parseInt(lastContents);
 				lastContents = new XSSFRichTextString(sst.getEntryAt(idx)).toString();
 				nextIsString = false;
-			}
-			
-			if(name.equals("v")){
-				System.out.println(lastContents);
 			}
 		}
 		
@@ -255,7 +238,6 @@ public class BigExcelReaderUtil {
 			
 			if(name.equals("c")){
 				position = attrs.getValue("r");
-				System.out.print(attrs.getValue("r") + " - ");
 				String cellType = attrs.getValue("t");
 				if(cellType != null && cellType.equals("s")){
 					nextIsString = true;
@@ -273,9 +255,6 @@ public class BigExcelReaderUtil {
 				nextIsString = false;
 			}
 			
-			if(name.equals("v")){
-				System.out.println(lastContents);
-			}
 			
 			if(position != null){
 				char[] chars = position.toCharArray();
