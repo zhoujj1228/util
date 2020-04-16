@@ -32,7 +32,7 @@ public class FileUtil {
 	
 	
 	
-	private static String getFileName(File file) {
+	public static String getFileName(File file) {
 		String name = file.getName();
 		if(name.contains(".")) {
 			name = name.substring(0, name.indexOf("."));
