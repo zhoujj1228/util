@@ -25,13 +25,24 @@ public class FileUtil {
 
 	@SuppressWarnings("rawtypes")
 	public static void main(String[] args){
-		String path = "D:/Test/CreateDir/" + "com/dc/esb/zjc/baseservice";
-		createDIRbyPath(path);
+		String fileName = getFileName(new File("D:\\Test\\20200415\\字段映射文档-综合网点系统（存款）.xlsx"));
+		System.out.println(fileName);
 	}
 	
 	
 	
 	
+	private static String getFileName(File file) {
+		String name = file.getName();
+		if(name.contains(".")) {
+			name = name.substring(0, name.indexOf("."));
+		}
+		return name;
+	}
+
+
+
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void itorFilePathMap(TreeMap<?, TreeMap> fileSubPathMap, String off) {
 		Set<String> keySet = (Set<String>) fileSubPathMap.keySet();
