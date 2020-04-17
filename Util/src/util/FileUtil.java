@@ -1,8 +1,8 @@
 package util;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,10 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -132,10 +130,11 @@ public class FileUtil {
 	}
 	
 	/**
-	 * 读取文件内容
+	 * 读取文件内容，拷贝速度太慢
 	 * @param file
 	 * @return 文件内容（String）
 	 */
+	@Deprecated
 	public static boolean copyFile(File fromFile, File toFile){
 		FileInputStream input = null;
 		FileOutputStream output = null;
@@ -169,6 +168,40 @@ public class FileUtil {
 		return true;
 	}
 	
+	public static boolean nioCopyFile(File source, File target) {
+		FileChannel in = null;
+		FileChannel out = null;
+		FileInputStream inStream = null;
+		FileOutputStream outStream = null;
+		try {
+			inStream = new FileInputStream(source);
+			outStream = new FileOutputStream(target);
+			in = inStream.getChannel();
+			out = outStream.getChannel();
+			in.transferTo(0, in.size(), out);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			close(inStream);
+			close(in);
+			close(outStream);
+			close(out);
+		}
+		return true;
+	} 
+	
+	private static void close(Closeable source) {
+		if(source != null) {
+			try {
+				source.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+	
 	public static boolean copyFileIsNoExist(File fromFile, File toFile){
 		if(toFile.exists()) {
 			return true;
@@ -188,7 +221,7 @@ public class FileUtil {
 			}
 		}
 		
-		return copyFile(fromFile, toFile);
+		return nioCopyFile(fromFile, toFile);
 	}
 	
 	public static boolean copyFileToDir(File fromFile, File dirFile){
