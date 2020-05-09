@@ -26,6 +26,13 @@ public class Test {
 		long time1 = parseDate.getTime();
 		System.out.println(time1 - time);
 		
+		byte[] data =
+			{ 8, 8, 8, 8, 8, 8, 8, 8 };
+		
+		for (byte b : data) {
+			System.out.println(b);
+		}
+		
 		/*String s = "#MXSD_r:2#esbsplit#MXSD_q:C1#esbsplit#MXSD_REPLY_TAG:true#esbsplit#MXSD_n:1511265540859#esbsplit#MXSD_m:1511265540858#esbsplit#MXSD_l:1511265540743#esbsplit#MXSD_k:1511265540740#esbsplit#MXSD_j";
 		String[] split = s.split("#esbsplit#");
 		for (int i = 0; i < split.length; i++) {
