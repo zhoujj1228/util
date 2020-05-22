@@ -34,10 +34,10 @@ import com.sun.net.httpserver.HttpServer;
 
 public class HttpUtil {
 	
-	public static void main(String[] args) throws InterruptedException{
-		String url = "https://rsshub.app/telegram/channel/jdkzjk";
-		String result = callHttpParamGet(url, null, null, "UTF-8", null);
-		System.out.println(result);
+	public static void main(String[] args) throws Throwable{
+		String url = "https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js";
+		String downloadFile = downloadFile(url, PathUtil.getProjectPath() + "/temp/", null);
+		System.out.println(downloadFile);
 	}
 	
 	
