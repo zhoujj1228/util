@@ -33,6 +33,27 @@ public class StringUtil {
 	}
 	
 	
+	/**
+	 * 将list转换为string，中间以标记字符间隔
+	 * @param collection
+	 * @param splitFlag
+	 * @param length 最多保留多少个结果
+	 * @return
+	 */
+	public static String getStringSplitflag(Collection<String> collection, String splitFlag, int length) {
+		String result = "";
+		int size = 0;
+		for (String system : collection) {
+			result = result + system +  splitFlag;
+			size++;
+			if(size > length) {
+				break;
+			}
+		}
+		return result.substring(0, result.length() - 1);
+	}
+	
+	
 	public static String ifNullToEmptyStr(String str) {
 		if(str == null) {
 			return "";
