@@ -23,6 +23,10 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import util.comparator.StringNumComparator;
 
+/**
+ * 全部读取使用BigExcelReaderUtil.processOnSheetsToMap(filePath);
+ * 部分读取使用BigExcelReaderUtil.processAllSheetsToMapByIdxList(filePath,indexList);
+ */
 public class BigExcelReaderUtil {
 
 	public static HashMap<String, HashMap<String, HashMap<String, String>>> indexRowColMap;

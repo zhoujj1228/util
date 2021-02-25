@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class ListUtil {
+public class ListUtil extends CollectionUtil{
 
 	public static void main(String[] args) {
 		List<String> list1 = new ArrayList<>();
@@ -23,6 +23,18 @@ public class ListUtil {
 		System.out.println(mergeLists);
 
 	}
+	
+
+	/**
+	 * ÖðÐÐ´òÓ¡list
+	 * @param lastTipList
+	 */
+	public static void displayStrList(List<String> lastTipList) {
+		for (String str : lastTipList) {
+			System.out.println(str);
+		}
+	}
+	
 	
 	public static String getStringByListAndSplitFlag(List<String> list, String flag){
 		if(list == null || list.size() == 0){

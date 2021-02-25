@@ -219,5 +219,25 @@ public class XmlUtil {
 			return null;
 		}
 	}
+	/**
+	 * 得到最后一个节点，但是如果有相同节点是使用第一个节点
+	 * @param nodesPath	下属的节点路径，如SDOROOT下的SYS_HEAD/CONSUMER_SEQ_NO，则填入SYS_HEAD/CONSUMER_SEQ_NO
+	 * @param root 父节点
+	 * @return 最后的节点
+	 */
+	public static Element getLastNodeByNodes(String nodesPath, Element root){
+		List<Element> list = root.elements();
+		Element result = null;
+		final String[] nodes = nodesPath.split("/");
+		for(String s : nodes){
+			for(Element e : list){
+				if(e.getName().equals(s)){
+					list = e.elements();
+					result = e;
+				}
+			}
+		}
+		return result;
+	}
 	
 }

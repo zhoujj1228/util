@@ -1,8 +1,7 @@
 package util;
 
-import static org.junit.Assert.*;
 
-import org.junit.Test;
+import java.io.File;
 
 public class PathUtil {
 	public static void main(String[] args) {
@@ -17,5 +16,10 @@ public class PathUtil {
 	public static String getProjectPath(){
 		String projectPath = System.getProperty("user.dir");
 		return projectPath;
+	}
+
+	public static boolean createDirs(String craeteDirPath){
+		File createDirFile = new File(craeteDirPath);
+		return createDirFile.mkdirs();
 	}
 }
